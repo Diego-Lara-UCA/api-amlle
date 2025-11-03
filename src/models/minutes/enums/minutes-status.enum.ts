@@ -1,4 +1,6 @@
 export enum MinutesState {
     BORRADOR = "BORRADOR",
-    //@TODO
+    PENDIENTE = "PENDIENTE",
+    FINALIZADO = "FINALIZADO",
+    ARCHIVADO = "ARCHIVADO"
 }

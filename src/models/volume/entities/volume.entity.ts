@@ -21,7 +21,8 @@ export class VolumeEntity {
   @Column({ type: 'int' })
   number: number;
 
-  //@TODO: numero de págs.
+  @Column({ type: 'int' })
+  pageCount: number
 
   @Column({
     type: 'enum',
