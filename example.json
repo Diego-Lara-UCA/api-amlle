@@ -1,0 +1,102 @@
+{
+  "id": "adc60fb4-82af-411f-bb10-bc0dcb6f88f6",
+  "name": "Nuevo Libro - 22/10/2025",
+  "status": "BORRADOR",
+  "actCount": 1,
+  "agreementCount": 0,
+  "pageCount": 1,
+  "createdAt": "2025-10-22T06:20:53.075Z",
+  "authorizationDate": "2025-10-22T06:20:53.075Z",
+  "createdBy": "Usuario Actual",
+  "lastModified": "2025-10-22T06:23:49.763Z",
+  "modifiedBy": "Usuario Actual (editado)",
+  "acts": [
+    {
+      "id": "d6bb53b8-f7d2-4b96-bdad-c7fb8f2bf65a",
+      "bookId": "adc60fb4-82af-411f-bb10-bc0dcb6f88f6",
+      "bookName": "Nuevo Libro - 22/10/2025",
+      "agreements": [
+        {
+          "id": "4c71e41d-702a-4af6-886f-fbfd4f02a3d3",
+          "name": "Acuerdo número Uno",
+          "content": "<p style=\"text-align: left;\"></p> <table><tr><td><p><strong>Fase</strong></p></td><td><p><strong>Enfoque Principal del PO</strong></p></td><td><p><strong>Actividades y Responsabilidades del PO</strong></p></td></tr><tr><td><p><strong>Fase 1: Descubrimiento y Planificación (Semana 1)</strong></p></td><td><p><strong>Definir el \"Qué\" y el \"Porqué\"</strong></p></td><td><ul><li>Liderar talleres con stakeholders para establecer una visión compartida.</li><li>Crear el Product Backlog inicial, priorizando las funcionalidades de mayor impacto.</li><li>Definir los KPIs iniciales.</li></ul></td></tr><tr><td><p><strong>Fase 2: Construcción del MVP (Semanas 2-4)</strong></p></td><td><p><strong>Guiar y Clarificar</strong></p></td><td><p>- Refinar continuamente el backlog.</p><p>- Estar disponible para el equipo para resolver dudas funcionales.</p><p>- Aceptar o rechazar los incrementos del producto.</p></td></tr><tr><td><p><strong>Fase 3: Validación y Cumplimiento (Semana 5)</strong></p></td><td><p><strong>Validar con el Negocio</strong></p></td><td><p>- Diseñar y supervisar las pruebas de aceptación de usuario (UAT).</p><p>- Asegurar el cumplimiento de requisitos legales y fiscales.</p><p>- Gestionar el feedback de los usuarios.</p></td></tr><tr><td><p><strong>Fase 4: Lanzamiento y Optimización (Semana 6)</strong></p></td><td><p><strong>Entregar Valor y Medir</strong></p></td><td><p>- Tomar la decisión de Go/No-Go para el lanzamiento.</p><p>- Comunicar el valor entregado a los stakeholders.</p><p>- Analizar los datos iniciales de uso y los KPIs.</p></td></tr></table>",
+          "actId": "d6bb53b8-f7d2-4b96-bdad-c7fb8f2bf65a",
+          "actName": "Acta número Uno",
+          "bookId": "adc60fb4-82af-411f-bb10-bc0dcb6f88f6",
+          "bookName": "Nuevo Libro - 22/10/2025",
+          "createdAt": "2025-10-22T06:23:25.275Z",
+          "createdBy": "Usuario Actual",
+          "lastModified": "2025-10-22T06:23:49.761Z",
+          "modifiedBy": "Usuario Actual"
+        }
+      ],
+      "sessionPoints": [],
+      "clarifyingNote": "",
+      "name": "Acta número Uno",
+      "sessionDate": "2025-10-22T06:23:15.018Z",
+      "sessionType": "Ordinary",
+      "sessionTime": "diez horas",
+      "attendees": {
+        "syndic": {
+          "id": "cm-2",
+          "name": "Edwin Gilberto Orellana Núñez",
+          "role": "SYNDIC"
+        },
+        "owners": [
+          {
+            "id": "cm-3",
+            "name": "Sonia Elizabeth Andrade de Jovel",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-4",
+            "name": "Héctor Rafael Hernández Dale",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-5",
+            "name": "Francisco Antonio Castellón Belloso",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-6",
+            "name": "José Roberto Munguía Palomo",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-7",
+            "name": "Josselin Abigail Torres Burgos",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-8",
+            "name": "Ana Lucía Martínez de la O",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-9",
+            "name": "Carlos Alberto Godoy",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-10",
+            "name": "David Ernesto Reyes",
+            "role": "OWNER"
+          }
+        ],
+        "secretary": {
+          "id": "cm-1",
+          "name": "Zoila Milagro Navas Quintanilla",
+          "role": "SECRETARY"
+        }
+      },
+      "bodyContent": "<p data-act-header=\"true\"><strong>Acta número Uno.</strong> Sesión ordinaria celebrada por el Concejo Municipal en el salón de reuniones de la Alcaldía Municipal de Antiguo Cuscatlán, a las diez horas del día VeintiDos de octubre del año dos mil VeintiCinco, presidió la reunión la señora Alcaldesa Municipal Licda. Zoila Milagro Navas Quintanilla, con la asistencia del señor Síndico Municipal Licenciado Edwin Gilberto Orellana Núñez y de los concejales propietarios: Sonia Elizabeth Andrade de Jovel, Héctor Rafael Hernández Dale, Francisco Antonio Castellón Belloso, José Roberto Munguía Palomo, Josselin Abigail Torres Burgos, Ana Lucía Martínez de la O, Carlos Alberto Godoy, David Ernesto Reyes y la Secretaria Municipal del Concejo Sra. Zoila Milagro Navas Quintanilla. Seguidamente la sesión dio inicio con los siguientes puntos:</p>",
+      "actNumber": 1,
+      "createdAt": "2025-10-22T06:23:15.018Z",
+      "createdBy": "Usuario Actual",
+      "lastModified": "2025-10-22T06:23:15.018Z",
+      "modifiedBy": "Usuario Actual",
+      "agreementsCount": 1
+    }
+  ]
+}
