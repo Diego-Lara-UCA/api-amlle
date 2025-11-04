@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
   BadRequestException,
+  MethodNotAllowedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { SetPasswordDto } from './dto/set-password.dto';
 import { ChangeRoleDto } from './dto/change-role.dto';
 import Argon2idUtils from 'src/common/utils/argon2id.util';
+import { use } from 'passport';
 
 @Injectable()
 export class UserService {
@@ -84,6 +86,15 @@ export class UserService {
 
   async setPassword(id: string, setPasswordDto: SetPasswordDto): Promise<void> {
     const user = await this.findOneById(id);
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID '${id}' no encontrado`);
+    }
+
+    if (user.activo) {
+      throw new MethodNotAllowedException(`Usuario con ID ${id} ya se encuentra activado`)
+    }
+
     const { contrasena } = setPasswordDto;
 
     user.contrasena = await Argon2idUtils.Encrypt(setPasswordDto.contrasena);

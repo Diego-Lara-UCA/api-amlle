@@ -184,6 +184,19 @@ Endpoints para la administración de usuarios.
 
 ---
 
+### `GET /api/users/find-by-name`
+
+* **Descripción:** Devuelve el ID del usuario por su nombre.
+* **Rol Requerido:** ``
+* **Body (DTO):** `CreateUserDto`
+    ```json
+    {
+      "nombre": "string (max 255)"
+    }
+    ```
+
+---
+
 ### `POST /api/users/set-password/:id`
 
 * **Descripción:** Permite a un usuario establecer su contraseña.

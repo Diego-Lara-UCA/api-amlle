@@ -20,13 +20,14 @@ import { UserResponseDto } from './dto/user-response.dto';
 import { Roles } from 'src/common/utils/decorators/roles.decorator';
 import { Role } from './enums/role.enum';
 import CryptoUtil from 'src/common/utils/crypto.util';
+import { Public } from 'src/common/utils/decorators/public.decorator';
 
 @Controller('api/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post("create")
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   async Create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
     const password = CryptoUtil.Create12BytesString();
@@ -40,19 +41,25 @@ export class UserController {
   }
 
   @Get("all")
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   async FindAll(): Promise<UserEntity[]> {
     return this.userService.findAll();
   }
 
   @Get('find/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   async FindOneById(@Param('id', ParseUUIDPipe) id: string): Promise<UserEntity> {
     return this.userService.findOneById(id);
   }
 
+  @Get('find-by-name')
+  @Public()
+  async FindOneByName(@Body() data: CreateUserDto) {
+    return (await this.userService.findOneByName(data.nombre)).id;
+  }
+
   @Patch('update/profile/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   async Update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -63,14 +70,14 @@ export class UserController {
   }
 
   @Delete('remove/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async Remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     await this.userService.remove(id);
   }
 
   @Post('set-password/:id')
-  @Roles(Role.ADMIN, Role.REGULAR)
+  @Public()
   async SetPassword(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() setPasswordDto: SetPasswordDto,
@@ -79,8 +86,10 @@ export class UserController {
     return { message: 'Contraseña establecida correctamente' };
   }
 
+
+
   @Patch('change-role/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   ChangeRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changeRoleDto: ChangeRoleDto,
