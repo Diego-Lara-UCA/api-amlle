@@ -96,3 +96,448 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+# API Endpoints
+
+Esta es la documentación de los endpoints de la API, generada a partir de los controladores proporcionados.
+
+## 🔑 Autenticación (Bearer Token)
+
+Todos los endpoints que no estén marcados como `Público` requieren un token de autenticación.
+El token debe ser enviado en el encabezado `Authorization` con el formato `Bearer <JWT>`.
+
+---
+
+## 🔐 Autenticación (`/api/auth`)
+
+Endpoints para el manejo de sesiones de usuario.
+
+---
+
+### `POST /api/auth/login`
+
+* **Descripción:** Inicia sesión de un usuario y devuelve un token JWT.
+* **Rol Requerido:** `Público`
+* **Body (DTO):** `LoginDto`
+    ```json
+    {
+      "name": "string",
+      "password": "string"
+    }
+    ```
+
+---
+
+## 👤 Usuarios (`/api/users`)
+
+Endpoints para la administración de usuarios.
+
+---
+
+### `POST /api/users/create`
+
+* **Descripción:** Crea un nuevo usuario y le asigna una contraseña temporal.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** `CreateUserDto`
+    ```json
+    {
+      "nombre": "string (max 255)"
+    }
+    ```
+
+---
+
+### `GET /api/users/all`
+
+* **Descripción:** Obtiene una lista de todos los usuarios.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/users/find/:id`
+
+* **Descripción:** Obtiene un usuario específico por su ID.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/users/update/profile/:id`
+
+* **Descripción:** Actualiza la información del perfil de un usuario.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** `UpdateUserDto`
+    ```json
+    {
+      "nombre": "string (opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/users/remove/:id`
+
+* **Descripción:** Elimina un usuario de forma permanente.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+### `POST /api/users/set-password/:id`
+
+* **Descripción:** Permite a un usuario establecer su contraseña.
+* **Rol Requerido:** `ADMIN`, `REGULAR`
+* **Body (DTO):** `SetPasswordDto`
+    ```json
+    {
+      "contrasena": "string (min 8 caracteres)"
+    }
+    ```
+
+---
+
+### `PATCH /api/users/change-role/:id`
+
+* **Descripción:** Cambia el rol de un usuario específico.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** `ChangeRoleDto`
+    ```json
+    {
+      "rol": "Role (enum)"
+    }
+    ```
+
+---
+
+## 📚 Libros (`/api/book`)
+
+Endpoints para la administración de libros.
+
+---
+
+### `POST /api/book/create`
+
+* **Descripción:** Crea un nuevo libro.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `CreateBookDto`
+    ```json
+    {
+      "name": "string",
+      "status": "BookState (enum, opcional)",
+      "authorizationDate": "string (ISO 8601 Date, opcional)"
+    }
+    ```
+
+---
+
+### `GET /api/book/all`
+
+* **Descripción:** Obtiene una lista de todos los libros.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/book/find/:id`
+
+* **Descripción:** Obtiene un libro específico por su ID.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/book/update/:id`
+
+* **Descripción:** Actualiza la información de un libro.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateBookDto`
+    ```json
+    {
+      "name": "string (opcional)",
+      "status": "BookState (enum, opcional)",
+      "authorizationDate": "string (ISO 8601 Date, opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/book/delete/:id`
+
+* **Descripción:** Elimina un libro de forma permanente.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/book/update-status/:id`
+
+* **Descripción:** Actualiza el estado de un libro (ej. 'ABIERTO', 'CERRADO').
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateBookStatusDto`
+    ```json
+    {
+      "status": "BookState (enum)"
+    }
+    ```
+
+---
+
+## 📖 Volúmenes (`/api/volume`)
+
+Endpoints para la administración de volúmenes (tomos).
+
+---
+
+### `POST /api/volume/create`
+
+* **Descripción:** Crea un nuevo volumen asociado a un libro.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `CreateVolumeDto`
+    ```json
+    {
+      "number": "number (entero positivo)",
+      "bookId": "string (UUID)",
+      "status": "VolumeState (enum, opcional)"
+    }
+    ```
+
+---
+
+### `GET /api/volume/find-all-by-book/:bookId`
+
+* **Descripción:** Obtiene todos los volúmenes de un libro específico.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/volume/find/:id`
+
+* **Descripción:** Obtiene un volumen específico por su ID.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/volume/update/:id`
+
+* **Descripción:** Actualiza la información de un volumen (ej. número).
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateVolumeDto`
+    ```json
+    {
+      "number": "number (entero positivo, opcional)",
+      "status": "VolumeState (enum, opcional)"
+    }
+    ```
+
+---
+
+### `PATCH /api/volume/update-status/:id`
+
+* **Descripción:** Actualiza el estado de un volumen.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateVolumeStatusDto`
+    ```json
+    {
+      "status": "VolumeState (enum)"
+    }
+    ```
+
+---
+
+### `DELETE /api/volume/delete/:id`
+
+* **Descripción:** Elimina un volumen de forma permanente.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+## 📜 Actas y Participantes (`/api/`)
+
+Endpoints para la administración de actas y la lista maestra de participantes.
+
+---
+
+### `POST /api/minutes/create`
+
+* **Descripción:** Crea una nueva acta, asociándola a un volumen y participantes.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `CreateMinutesDto`
+    ```json
+    {
+      "volumeId": "string (UUID)",
+      "number": "string",
+      "meetingDate": "string (ISO 8601 Date)",
+      "meetingTime": "string (opcional)",
+      "agenda": "string (opcional)",
+      "bodyContent": "string (opcional)",
+      "status": "MinutesState (enum, opcional)",
+      "participantIds": "string[] (array de UUIDs, opcional)"
+    }
+    ```
+
+---
+
+### `GET /api/minutes/find-all-by-volume/:volumeId`
+
+* **Descripción:** Obtiene todas las actas de un volumen específico.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/minutes/find/:id`
+
+* **Descripción:** Obtiene un acta específica por su ID.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/minutes/update/:id`
+
+* **Descripción:** Actualiza la información de un acta (ej. contenido).
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateMinutesDto`
+    ```json
+    {
+      "number": "string (opcional)",
+      "meetingDate": "string (ISO 8601 Date, opcional)",
+      "meetingTime": "string (opcional)",
+      "agenda": "string (opcional)",
+      "bodyContent": "string (opcional)"
+    }
+    ```
+
+---
+
+### `PATCH /api/minutes/update-status/:id/status`
+
+* **Descripción:** Actualiza el estado de un acta (ej. 'BORRADOR', 'APROBADA').
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateMinutesStatusDto`
+    ```json
+    {
+      "status": "MinutesState (enum)"
+    }
+    ```
+
+---
+
+### `DELETE /api/minutes/delete/:id`
+
+* **Descripción:** Elimina un acta de forma permanente.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+### `POST /api/participants/crate`
+
+* **Descripción:** Crea un nuevo participante en la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** `CreateParticipantDto`
+    ```json
+    {
+      "name": "string",
+      "isSubstitute": "boolean (opcional)"
+    }
+    ```
+
+---
+
+### `GET /api/participants/find-all`
+
+* **Descripción:** Obtiene la lista maestra completa de participantes.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/participants/find/:id`
+
+* **Descripción:** Obtiene un participante específico por su ID.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/participants/update/:id`
+
+* **Descripción:** Actualiza la información de un participante de la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** `UpdateParticipantDto`
+    ```json
+    {
+      "name": "string (opcional)",
+      "isSubstitute": "boolean (opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/participants/delete/:id`
+
+* **Descripción:** Elimina un participante de la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`
+* **Body (DTO):** N/A
+
+---
+
+## 🤝 Acuerdos (`/api/agreements`)
+
+Endpoints para la administración de acuerdos.
+
+---
+
+### `POST /api/agreements/create`
+
+* **Descripción:** Crea un nuevo acuerdo y lo asocia a un acta.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `CreateAgreementDto`
+    ```json
+    {
+      "minutesId": "string (UUID)",
+      "content": "string (opcional)"
+    }
+    ```
+
+---
+
+### `GET /api/agreements/get-by-minutes/:minutesId`
+
+* **Descripción:** Obtiene todos los acuerdos de un acta específica.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/agreements/get/:id`
+
+* **Descripción:** Obtiene un acuerdo específico por su ID.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/agreements/update/:id`
+
+* **Descripción:** Actualiza el contenido de un acuerdo.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateAgreementDto`
+    ```json
+    {
+      "content": "string (opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/agreements/delete/:id`
+
+* **Descripción:** Elimina un acuerdo de forma permanente.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** N/A
