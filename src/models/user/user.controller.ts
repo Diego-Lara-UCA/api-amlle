@@ -27,8 +27,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post("create")
-  //@Roles(Role.ADMIN, Role.SUPERADMIN)
-  @Public()
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
   async Create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
     return {
@@ -48,10 +47,10 @@ export class UserController {
     return this.userService.findOneById(id);
   }
 
-  @Get('find-by-name')
+  @Get('find-by-name/:name')
   @Public()
-  async FindOneByName(@Body() data: CreateUserDto) {
-    return (await this.userService.findOneByName(data.nombre)).id;
+  async FindOneByName(@Param('name', ParseUUIDPipe) name: string) {
+    return (await this.userService.findOneByName(name)).id;
   }
 
   @Patch('update/profile/:id')
