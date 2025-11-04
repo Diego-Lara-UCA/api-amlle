@@ -49,7 +49,7 @@ export class UserController {
 
   @Get('find-by-name/:name')
   @Public()
-  async FindOneByName(@Param('name', ParseUUIDPipe) name: string) {
+  async FindOneByName(@Param('name') name: string) {
     return (await this.userService.findOneByName(name)).id;
   }
 
