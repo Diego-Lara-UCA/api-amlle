@@ -38,6 +38,20 @@ export class VolumeEntity {
   @OneToMany(() => MinutesEntity, (minutes) => minutes.volume)
   minutes: MinutesEntity[];
 
+  @Column({
+    name: 'authorization_date',
+    type: 'date',
+    nullable: true,
+  })
+  authorizationDate: Date;
+
+  @Column({
+    name: 'closing_date',
+    type: 'date',
+    nullable: true,
+  })
+  closingDate: Date;
+
   @ManyToOne(() => UserEntity, (user) => user.createdVolumes, {
     nullable: false,
   })

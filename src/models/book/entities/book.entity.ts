@@ -44,6 +44,13 @@ export class BookEntity {
   })
   authorizationDate: Date;
 
+  @Column({
+    name: 'closing_date',
+    type: 'date',
+    nullable: true,
+  })
+  closingDate: Date;
+
   @ManyToOne(() => UserEntity, (user) => user.booksModified, {
     nullable: true,
   })

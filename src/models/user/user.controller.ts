@@ -30,13 +30,8 @@ export class UserController {
   @Roles(Role.ADMIN, Role.SUPERADMIN)
   async Create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
-    const password = CryptoUtil.Create12BytesString();
-    console.log(password);
-    
-    await this.userService.setPassword(user.id, {contrasena: password});
     return {
       id: user.id,
-      password: password
     }
   }
 
@@ -86,7 +81,15 @@ export class UserController {
     return { message: 'Contraseña establecida correctamente' };
   }
 
-
+  @Patch('change-password/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  async ChangePassword(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() setPasswordDto: SetPasswordDto,
+  ): Promise<{ message: string }> {
+    await this.userService.ChangePassword(id, setPasswordDto);
+    return { message: 'Contraseña establecida correctamente' };
+  }
 
   @Patch('change-role/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)

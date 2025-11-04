@@ -92,21 +92,26 @@ export class UserService {
     }
 
     if (user.activo) {
-      throw new MethodNotAllowedException(`Usuario con ID ${id} ya se encuentra activado`)
+      throw new ConflictException(`Usuario con ID ${id} ya se encuentra activado`)
     }
 
     const { contrasena } = setPasswordDto;
-
     user.contrasena = await Argon2idUtils.Encrypt(setPasswordDto.contrasena);
 
+    user.activo = true;
     await this.userRepository.save(user);
   }
 
-  async resetPassword(
-    id: string,
-    setPasswordDto: SetPasswordDto,
-  ): Promise<void> {
-    return this.setPassword(id, setPasswordDto);
+    async ChangePassword(id: string, setPasswordDto: SetPasswordDto): Promise<void> {
+    const user = await this.findOneById(id);
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID '${id}' no encontrado`);
+    }
+
+    const { contrasena } = setPasswordDto;
+    user.contrasena = await Argon2idUtils.Encrypt(setPasswordDto.contrasena);
+    await this.userRepository.save(user);
   }
 
   async changeRole(id: string, changeRoleDto: ChangeRoleDto): Promise<UserEntity> {
