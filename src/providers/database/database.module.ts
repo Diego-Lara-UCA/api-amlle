@@ -18,6 +18,7 @@ import { entities } from 'src/models';
             entities: entities, 
             synchronize: true,
             logging: false,
+            ssl: {rejectUnauthorized: true} //@TODO: quitar
         }),
         inject: [ConfigService],
     }),
