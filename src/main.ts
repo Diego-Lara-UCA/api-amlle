@@ -8,7 +8,7 @@ async function bootstrap() {
 
   CorsConfig.EnableCors(app);
   GlobalPipe.ValidationPipe(app);
-
+  
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Connected at: ${process.env.PORT}`);
 }
