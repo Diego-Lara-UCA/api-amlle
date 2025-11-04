@@ -23,35 +23,37 @@ export class VolumeController {
   constructor(private readonly volumesService: VolumeService) {}
 
   @Post("create")
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   create(@Body() createVolumeDto: CreateVolumeDto, @User('userId') userId: string) {
     return this.volumesService.create(createVolumeDto, userId);
   }
 
   @Get('find-all-by-book/:bookId')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findAllByBook(@Param('bookId', ParseUUIDPipe) bookId: string) {
     return this.volumesService.findAllByBook(bookId);
   }
 
   @Get('find/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.volumesService.findOneById(id);
   }
 
   @Patch('update/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   update(@Param('id', ParseUUIDPipe) id: string, @Body() updateVolumeDto: UpdateVolumeDto, @User('userId') userId: string) {
     return this.volumesService.update(id, updateVolumeDto, userId);
   }
 
   @Patch('update-status/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateStatus(@Param('id', ParseUUIDPipe) id: string, @Body() updateStatusDto: UpdateVolumeStatusDto, @User('userId') userId: string) {
     return this.volumesService.updateStatus(id, updateStatusDto.status, userId);
   }
 
   @Delete('delete/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.volumesService.remove(id);

@@ -25,7 +25,7 @@ export class MinuteController {
   constructor(private readonly minutesService: MinutesService) {}
 
   @Post('minutes/create')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   createMinutes(
     @Body() createDto: CreateMinutesDto,
     @User('userId') userId: string,
@@ -34,17 +34,19 @@ export class MinuteController {
   }
 
   @Get('minutes/find-all-by-volume/:volumeId')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findAllMinutesByVolume(@Param('volumeId', ParseUUIDPipe) volumeId: string) {
     return this.minutesService.findAllMinutesByVolume(volumeId);
   }
 
   @Get('minutes/find/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findOneMinutes(@Param('id', ParseUUIDPipe) id: string) {
     return this.minutesService.findOneMinutes(id);
   }
 
   @Patch('minutes/update/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateMinutes(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDto: UpdateMinutesDto,
@@ -54,7 +56,7 @@ export class MinuteController {
   }
 
   @Patch('minutes/update-status/:id/status')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateMinutesStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateStatusDto: UpdateMinutesStatusDto,
@@ -64,30 +66,32 @@ export class MinuteController {
   }
 
   @Delete('minutes/delete/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   @HttpCode(HttpStatus.NO_CONTENT)
   removeMinutes(@Param('id', ParseUUIDPipe) id: string) {
     return this.minutesService.removeMinutes(id);
   }
 
   @Post('participants/crate')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   createParticipant(@Body() dto: CreateParticipantDto) {
     return this.minutesService.createParticipant(dto);
   }
 
   @Get('participants/find-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findAllParticipants() {
     return this.minutesService.findAllParticipants();
   }
 
   @Get('participants/find/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findOneParticipant(@Param('id', ParseUUIDPipe) id: string) {
     return this.minutesService.findOneParticipant(id);
   }
 
   @Patch('participants/update/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateParticipant(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateParticipantDto,
@@ -96,7 +100,7 @@ export class MinuteController {
   }
 
   @Delete('participants/delete/:id')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   @HttpCode(HttpStatus.NO_CONTENT)
   removeParticipant(@Param('id', ParseUUIDPipe) id: string) {
     return this.minutesService.removeParticipant(id);

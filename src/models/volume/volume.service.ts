@@ -10,7 +10,7 @@ import { CreateVolumeDto } from './dto/create-volume.dto';
 import { UpdateVolumeDto } from './dto/update-volume.dto';
 import { UserService } from 'src/models/user/user.service';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
-import { VolumeState } from './enums/volume-status.enum';
+import { VolumeState } from './types/enums/volume-status.enum';
 import { BookService } from '../book/book.service';
 
 @Injectable()

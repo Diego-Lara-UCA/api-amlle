@@ -1,0 +1,105 @@
+{
+  "id": "tome-2025-1",
+  "bookId": "book-2025",
+  "name": "Tomo 1 - 2025",
+  "bookName": "Libro de Actas Municipales 2025",
+  "tomeNumber": 1,
+  "status": "BORRADOR",
+  "agreementCount": 2,
+  "pageCount": 4,
+  "actCount": 1,
+  "authorizationDate": "2025-10-04T14:30:00.000Z",
+  "closingDate": null,
+  "createdAt": "2025-10-04T14:30:00.000Z",
+  "createdBy": "Jorge Lemus",
+  "lastModified": "2025-11-03T08:44:00.000Z",
+  "modifiedBy": "Usuario Actual",
+  "pdfSettings": {
+    "pageSize": "A4",
+    "orientation": "portrait",
+    "margins": {
+      "top": 50,
+      "bottom": 50,
+      "left": 60,
+      "right": 60
+    },
+    "lineHeight": 1.5,
+    "fontSize": 11,
+    "enablePageNumbering": true,
+    "pageNumberingOffset": 2,
+    "pageNumberingPosition": "center",
+    "pageNumberingFormat": "simple"
+  },
+  "acts": [
+    {
+      "id": "acta-101",
+      "name": "Acta número Uno",
+      "tomeId": "tome-2025-1",
+      "tomeName": "Tomo 1 - 2025",
+      "sessionDate": "2025-11-01T10:00:00.000Z",
+      "actNumber": 1,
+      "sessionType": "Ordinary",
+      "sessionTime": "diez horas",
+      "attendees": {
+        "syndic": {
+          "id": "cm-2",
+          "name": "Edwin Gilberto Orellana Núñez",
+          "role": "SYNDIC"
+        },
+        "secretary": {
+          "id": "cm-1",
+          "name": "Zoila Milagro Navas Quintanilla",
+          "role": "SECRETARY"
+        },
+        "owners": [
+          {
+            "id": "cm-3",
+            "name": "Sonia Elizabeth Andrade de Jovel",
+            "role": "OWNER"
+          },
+          {
+            "id": "cm-12",
+            "name": "Ricardo José López",
+            "role": "SUBSTITUTE",
+            "substituteForId": "cm-4"
+          }
+        ]
+      },
+      "bodyContent": "<p>Contenido <strong>HTML</strong> del <em>cuerpo</em> del acta...</p><p>Segundo párrafo.</p>",
+      "agreementsCount": 2,
+      "clarifyingNote": "<p>Nota aclaratoria opcional...</p>",
+      "createdAt": "2025-11-02T11:00:00.000Z",
+      "createdBy": "Carlos Pérez",
+      "lastModified": "2025-11-03T08:40:00.000Z",
+      "modifiedBy": "Usuario Actual",
+      "agreements": [
+        {
+          "id": "acuerdo-201",
+          "name": "Acuerdo número Uno",
+          "content": "<p>Contenido HTML del <strong>acuerdo uno</strong>.</p>",
+          "actId": "acta-101",
+          "actName": "Acta número Uno",
+          "tomeId": "tome-2025-1",
+          "tomeName": "Tomo 1 - 2025",
+          "createdAt": "2025-11-02T11:05:00.000Z",
+          "createdBy": "Carlos Pérez",
+          "lastModified": "2025-11-02T11:05:00.000Z",
+          "modifiedBy": "Carlos Pérez"
+        },
+        {
+          "id": "acuerdo-202",
+          "name": "Acuerdo número Dos",
+          "content": "<p>Contenido HTML del <em>acuerdo dos</em>.</p>",
+          "actId": "acta-101",
+          "actName": "Acta número Uno",
+          "tomeId": "tome-2025-1",
+          "tomeName": "Tomo 1 - 2025",
+          "createdAt": "2025-11-02T11:10:00.000Z",
+          "createdBy": "Carlos Pérez",
+          "lastModified": "2025-11-02T11:10:00.000Z",
+          "modifiedBy": "Carlos Pérez"
+        }
+      ]
+    }
+  ]
+}

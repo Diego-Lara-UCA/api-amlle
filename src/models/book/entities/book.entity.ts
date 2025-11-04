@@ -34,9 +34,6 @@ export class BookEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
 
-  @Column({ type: 'int', default: null })
-  pageCount: number;
-
   @Column({
     name: 'authorization_date',
     type: 'date',

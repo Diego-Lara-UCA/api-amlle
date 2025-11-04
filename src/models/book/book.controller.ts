@@ -26,36 +26,38 @@ export class BookController {
     ) { }
 
     @Post("create")
-    @Roles(Role.ADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     create(@Body() createBookDto: CreateBookDto, @User('userId') userId: string) {
         return this.booksService.create(createBookDto, userId);
     };
 
     @Get("all")
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     findAll() {
         return this.booksService.findAll();
     }
 
     @Get('find/:id')
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     findOne(@Param('id', ParseUUIDPipe) id: string) {
         return this.booksService.findOneById(id);
     }
 
     @Patch('update/:id')
-    @Roles(Role.ADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     update(@Param('id', ParseUUIDPipe) id: string, @Body() updateBookDto: UpdateBookDto, @User('userId') userId: string) {
         return this.booksService.update(id, updateBookDto, userId);
     }
 
     @Delete('delete/:id')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     @HttpCode(HttpStatus.NO_CONTENT)
     remove(@Param('id', ParseUUIDPipe) id: string) {
         return this.booksService.remove(id);
     }
 
     @Patch('update-status/:id')
-    @Roles(Role.ADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     updateStatus(@Param('id', ParseUUIDPipe) id: string, @Body() updateBookStatusDto: UpdateBookStatusDto, @User('userId') userId: string) {
         return this.booksService.updateStatus(id, updateBookStatusDto.status, userId);
     }

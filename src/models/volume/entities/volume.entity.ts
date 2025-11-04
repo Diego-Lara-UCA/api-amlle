@@ -8,15 +8,22 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { VolumeState } from '../enums/volume-status.enum';
+import { VolumeState } from '../types/enums/volume-status.enum';
 import { BookEntity } from 'src/models/book/entities/book.entity';
 import { MinutesEntity } from 'src/models/minutes/entities/minute.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
+import { PdfSettings } from '../types/pdf-settings.type';
 
 @Entity('tomos')
 export class VolumeEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name: string;
+  
+  @Column({ type: 'json', nullable: true })
+  pdfSettings: PdfSettings;
 
   @Column({ type: 'int' })
   number: number;
