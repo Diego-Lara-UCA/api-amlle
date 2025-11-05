@@ -28,6 +28,7 @@ export class UserController {
 
   @Post("create")
   @Roles(Role.ADMIN, Role.SUPERADMIN)
+  //@Public()
   async Create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
     return {
@@ -73,9 +74,7 @@ export class UserController {
 
   @Patch('set-password')
   @Public()
-  async SetPassword(
-    @Body() setPasswordDto: SetPasswordDto,
-  ): Promise<{ message: string }> {
+  async SetPassword(@Body() setPasswordDto: SetPasswordDto): Promise<{ message: string }> {
     await this.userService.setPassword(setPasswordDto.id, setPasswordDto);
     return { message: 'Contraseña establecida correctamente' };
   }

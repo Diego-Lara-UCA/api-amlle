@@ -95,9 +95,7 @@ export class UserService {
       throw new ConflictException(`Usuario con ID ${id} ya se encuentra activado`)
     }
 
-    const { contrasena } = setPasswordDto;
     user.contrasena = await Argon2idUtils.Encrypt(setPasswordDto.contrasena);
-
     user.activo = true;
     await this.userRepository.save(user);
   }

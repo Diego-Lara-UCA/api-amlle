@@ -28,7 +28,7 @@ export class VolumeEntity {
   @Column({ type: 'int' })
   number: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 0 },)
   pageCount: number
 
   @Column({
