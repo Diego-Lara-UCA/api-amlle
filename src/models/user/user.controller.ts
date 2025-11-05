@@ -71,13 +71,12 @@ export class UserController {
     await this.userService.remove(id);
   }
 
-  @Post('set-password/:id')
+  @Patch('set-password')
   @Public()
   async SetPassword(
-    @Param('id', ParseUUIDPipe) id: string,
     @Body() setPasswordDto: SetPasswordDto,
   ): Promise<{ message: string }> {
-    await this.userService.setPassword(id, setPasswordDto);
+    await this.userService.setPassword(setPasswordDto.id, setPasswordDto);
     return { message: 'Contraseña establecida correctamente' };
   }
 
