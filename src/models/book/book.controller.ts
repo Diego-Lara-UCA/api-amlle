@@ -33,8 +33,7 @@ export class BookController {
     };
 
     @Get("all")
-    //@Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-    @Public()
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     findAll() {
         return this.booksService.findAll();
     }

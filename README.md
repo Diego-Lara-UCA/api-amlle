@@ -308,11 +308,28 @@ Endpoints para la administración de volúmenes (tomos).
 * **Rol Requerido:** `ADMIN`
 * **Body (DTO):** `CreateVolumeDto`
     ```json
-    {
-      "number": "number (entero positivo)",
-      "bookId": "string (UUID)",
-      "status": "VolumeState (enum, opcional)"
-    }
+      {
+        "number": "number (entero positivo)",
+        "bookId": "string (UUID)",
+        "name": "string (opcional)",
+        "pdfSettings": {
+          "pageSize": "string",
+          "orientation": "portrait | landscape",
+          "margins": {
+            "top": "number",
+            "bottom": "number",
+            "left": "number",
+            "right": "number"
+          },
+          "lineHeight": "number",
+          "fontSize": "number",
+          "enablePageNumbering": "boolean",
+          "pageNumberingOffset": "number",
+          "pageNumberingPosition": "center | left | right",
+          "pageNumberingFormat": "string"
+        },
+        "status": "VolumeState (enum, opcional)"
+      }
     ```
 
 ---
@@ -347,10 +364,30 @@ Endpoints para la administración de volúmenes (tomos).
 * **Rol Requerido:** `ADMIN`
 * **Body (DTO):** `UpdateVolumeDto`
     ```json
-    {
-      "number": "number (entero positivo, opcional)",
-      "status": "VolumeState (enum, opcional)"
-    }
+      {
+        "name": "string (opcional)",
+        "pdfSettings": {
+          "pageSize": "string",
+          "orientation": "portrait | landscape",
+          "margins": {
+            "top": "number",
+            "bottom": "number",
+            "left": "number",
+            "right": "number"
+          },
+          "lineHeight": "number",
+          "fontSize": "number",
+          "enablePageNumbering": "boolean",
+          "pageNumberingOffset": "number",
+          "pageNumberingPosition": "center | left | right",
+          "pageNumberingFormat": "string"
+        },
+        "number": "number (entero positivo, opcional)",
+        "pageCount": "number (entero, opcional)",
+        "status": "VolumeState (enum, opcional)",
+        "authorizationDate": "string (ISO 8601 Date, opcional)",
+        "closingDate": "string (ISO 8601 Date, opcional)"
+      }
     ```
 
 ---

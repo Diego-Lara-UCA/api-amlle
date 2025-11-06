@@ -17,6 +17,7 @@ export class GetVolumeResponseDto {
   bookId: string;
   bookName: string;
   createdById: string;
+  createdByName: string;
   minutesIds: string[];
   agreementCount: number;
   modificationIds: string[];
@@ -42,6 +43,7 @@ export class GetVolumeResponseDto {
       bookName: volume.book.name,
       bookId: volume.book?.id,
       createdById: volume.createdBy?.id,
+      createdByName: volume.createdBy.nombre,
       minutesIds: volume.minutes ? volume.minutes.map(minute => minute.id) : [],
       modificationIds: volume.modifications ? volume.modifications.map(mod => mod.id) : [],
       agreementCount: totalAgreements,
