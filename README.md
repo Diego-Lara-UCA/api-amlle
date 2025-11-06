@@ -266,11 +266,11 @@ Endpoints para la administración de libros.
 * **Rol Requerido:** `ADMIN`
 * **Body (DTO):** `UpdateBookDto`
     ```json
-    {
-      "name": "string (opcional)",
-      "status": "BookState (enum, opcional)",
-      "authorizationDate": "string (ISO 8601 Date, opcional)"
-    }
+      {
+        "name": "string (opcional)",
+        "authorizationDate": "string (ISO 8601 Date, opcional)",
+        "closingDate": "string (ISO 8601 Date, opcional)"
+      }
     ```
 
 ---
