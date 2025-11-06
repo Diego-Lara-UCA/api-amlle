@@ -52,41 +52,45 @@ export class VolumeService {
 
     findAll = async (): Promise<GetVolumeResponseDto[]> => {
         try {
-            // 2. Debemos cargar todas las relaciones para poder acceder a sus IDs
-            const volumes = await this.volumeRepository.find({
-                relations: [
-                    'book',
-                    'minutes',
-                    'createdBy',
-                    'modifications',
-                ],
-                order: {
-                    number: 'ASC'
-                }
-            });
+        const volumes = await this.volumeRepository.find({
+            relations: [
+            'book',
+            'minutes',
+            'minutes.agreements',
+            'createdBy',
+            'modifications',
+            ],
+            order: {
+            book: { name: 'ASC' },
+            number: 'ASC',
+            },
+        });
+        
+        return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
 
-            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
         } catch (error) {
-            throw handleDatabaseError(error, this.logger);
+        throw handleDatabaseError(error, this.logger);
         }
     };
 
     findAllByBook = async (bookId: string): Promise<GetVolumeResponseDto[]> => {
         try {
-            const volumes = await this.volumeRepository.find({
-                where: { book: { id: bookId } },
-                relations: [
-                    'book',
-                    'minutes',
-                    'createdBy',
-                    'modifications',
-                ],
-                order: { number: 'ASC' },
-            });
+        const volumes = await this.volumeRepository.find({
+            where: { book: { id: bookId } },
+            relations: [
+            'book',
+            'minutes',
+            'minutes.agreements',
+            'createdBy',
+            'modifications',
+            ],
+            order: { number: 'ASC' },
+        });
 
-            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
+        return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
+        
         } catch (error) {
-            throw handleDatabaseError(error, this.logger);
+        throw handleDatabaseError(error, this.logger);
         }
     };
 

@@ -17,9 +17,16 @@ export class GetVolumeResponseDto {
   bookId: string;
   createdById: string;
   minutesIds: string[];
+  agreementCount: number;
   modificationIds: string[];
 
   public static fromEntity(volume: VolumeEntity): GetVolumeResponseDto {
+    const totalAgreements = volume.minutes
+      ? volume.minutes.reduce((sum, minute) => {
+          return sum + (minute.agreements ? minute.agreements.length : 0);
+        }, 0)
+      : 0;
+
     return {
       id: volume.id,
       number: volume.number,
@@ -35,6 +42,7 @@ export class GetVolumeResponseDto {
       createdById: volume.createdBy?.id,
       minutesIds: volume.minutes ? volume.minutes.map(minute => minute.id) : [],
       modificationIds: volume.modifications ? volume.modifications.map(mod => mod.id) : [],
+      agreementCount: totalAgreements,
     };
   }
 }
