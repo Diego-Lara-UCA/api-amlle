@@ -1,22 +1,69 @@
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsIn,
+  ValidateNested,
+  IsDefined,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+const orientations = ['portrait', 'landscape'];
+const positions = ['center', 'left', 'right'];
+
 export class PdfMarginSettings {
+  @IsNumber()
+  @IsDefined()
   top: number;
+
+  @IsNumber()
+  @IsDefined()
   bottom: number;
+
+  @IsNumber()
+  @IsDefined()
   left: number;
+
+  @IsNumber()
+  @IsDefined()
   right: number;
 }
 
-export type PdfOrientation = 'portrait' | 'landscape';
-export type PdfPageNumberingPosition = 'center' | 'left' | 'right';
-export type PdfPageNumberingFormat = 'simple' | 'roman';
-
 export class PdfSettings {
+  @IsString()
+  @IsDefined()
   pageSize: string;
-  orientation: PdfOrientation;
+
+  @IsIn(orientations)
+  @IsDefined()
+  orientation: 'portrait' | 'landscape';
+
+  @ValidateNested()
+  @Type(() => PdfMarginSettings)
+  @IsDefined()
   margins: PdfMarginSettings;
+
+  @IsNumber()
+  @IsDefined()
   lineHeight: number;
+
+  @IsNumber()
+  @IsDefined()
   fontSize: number;
+
+  @IsBoolean()
+  @IsDefined()
   enablePageNumbering: boolean;
+
+  @IsNumber()
+  @IsDefined()
   pageNumberingOffset: number;
-  pageNumberingPosition: PdfPageNumberingPosition;
+
+  @IsIn(positions)
+  @IsDefined()
+  pageNumberingPosition: 'center' | 'left' | 'right';
+
+  @IsString()
+  @IsDefined()
   pageNumberingFormat: string;
 }
