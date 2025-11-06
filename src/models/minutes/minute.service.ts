@@ -15,6 +15,7 @@ import { MinutesState } from './enums/minutes-status.enum';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { VolumeService } from '../volume/volume.service';
+import { MinutesModification } from './entities/minutes-modification.entity';
 
 @Injectable()
 export class MinutesService {
@@ -25,9 +26,11 @@ export class MinutesService {
     private readonly minutesRepository: Repository<MinutesEntity>,
     @InjectRepository(ParticipantsEntity)
     private readonly participantRepository: Repository<ParticipantsEntity>,
+    @InjectRepository(MinutesModification)
+    private readonly modificationRepository: Repository<MinutesModification>,
     private readonly userService: UserService,
     private readonly volumesService: VolumeService,
-  ) {}
+  ) { }
 
   createMinutes = async (
     createDto: CreateMinutesDto,
@@ -35,7 +38,7 @@ export class MinutesService {
   ): Promise<MinutesEntity> => {
     try {
       const { volumeId, participantIds, ...minutesData } = createDto;
-      
+
       const [user, volume] = await Promise.all([
         this.userService.findOneById(userId),
         this.volumesService.findOneById(volumeId),
@@ -98,12 +101,23 @@ export class MinutesService {
   ): Promise<MinutesEntity> => {
     try {
       const modifier = await this.userService.findOneById(userId);
-      const minutes = await this.minutesRepository.preload({ id, ...updateDto });
+      const minutes = await this.minutesRepository.preload({
+        id,
+        ...updateDto,
+      });
+
       if (!minutes) {
         throw new NotFoundException(`Acta (Minutes) con ID "${id}" no encontrada.`);
       }
-      minutes.modifiedBy = modifier;
-      return await this.minutesRepository.save(minutes);
+
+      const savedMinutes = await this.minutesRepository.save(minutes);
+      const newModification = this.modificationRepository.create({
+        minutes: savedMinutes,
+        modifier: modifier,
+      });
+      await this.modificationRepository.save(newModification);
+
+      return savedMinutes;
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -115,13 +129,22 @@ export class MinutesService {
     userId: string,
   ): Promise<MinutesEntity> => {
     try {
-      const modifier = await this.userService.findOneById(userId);
-      const minutes = await this.findOneMinutes(id); // Reutiliza findOne para 404
+      const [modifier, minutes] = await Promise.all([
+        this.userService.findOneById(userId),
+        this.findOneMinutes(id),
+      ]);
 
       minutes.status = status;
-      minutes.modifiedBy = modifier;
+
+      const savedMinutes = await this.minutesRepository.save(minutes);
+      const newModification = this.modificationRepository.create({
+        minutes: savedMinutes,
+        modifier: modifier,
+      });
       
-      return await this.minutesRepository.save(minutes);
+      await this.modificationRepository.save(newModification);
+
+      return savedMinutes;
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -137,8 +160,6 @@ export class MinutesService {
       throw handleDatabaseError(error, this.logger);
     }
   };
-
-  // --- CRUD de Participants (Lista Maestra) ---
 
   createParticipant = async (dto: CreateParticipantDto): Promise<ParticipantsEntity> => {
     try {
@@ -169,7 +190,6 @@ export class MinutesService {
     }
   };
 
-  // Método helper para buscar por IDs
   findParticipantsByIds = async (ids: string[]): Promise<ParticipantsEntity[]> => {
     if (ids.length === 0) return [];
     try {

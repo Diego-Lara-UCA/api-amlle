@@ -15,6 +15,7 @@ import { MinutesState } from '../enums/minutes-status.enum';
 import { ParticipantsEntity } from './participants.entity';
 import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
+import { MinutesModification } from './minutes-modification.entity';
 
 @Entity('actas')
 export class MinutesEntity {
@@ -64,11 +65,8 @@ export class MinutesEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.minutesModified, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'modified_by_id' })
-  modifiedBy: UserEntity;
+  @OneToMany(() => MinutesModification, (mod) => mod.minutes)
+  modifications: MinutesModification[];
 
   @CreateDateColumn({
     type: 'timestamp',

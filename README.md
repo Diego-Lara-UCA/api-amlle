@@ -317,6 +317,14 @@ Endpoints para la administración de volúmenes (tomos).
 
 ---
 
+### `GET /api/volume/find-all`
+
+* **Descripción:** Obtiene todos los volúmenes.
+* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Body (DTO):** N/A
+
+---
+
 ### `GET /api/volume/find-all-by-book/:bookId`
 
 * **Descripción:** Obtiene todos los volúmenes de un libro específico.

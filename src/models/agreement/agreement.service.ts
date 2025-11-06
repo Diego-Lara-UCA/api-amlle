@@ -12,6 +12,7 @@ import { UserService } from 'src/models/user/user.service';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { MinutesService } from '../minutes/minute.service';
+import { AgreementModification } from './entities/agreement-modification.entity';
 
 @Injectable()
 export class AgreementService {
@@ -20,9 +21,11 @@ export class AgreementService {
   constructor(
     @InjectRepository(AgreementEntity)
     private readonly agreementRepository: Repository<AgreementEntity>,
+    @InjectRepository(AgreementModification)
+    private readonly modificationRepository: Repository<AgreementModification>,
     private readonly userService: UserService,
     private readonly minutesService: MinutesService,
-  ) {}
+  ) { }
 
   create = async (
     createDto: CreateAgreementDto,
@@ -82,7 +85,6 @@ export class AgreementService {
   ): Promise<AgreementEntity> => {
     try {
       const modifier = await this.userService.findOneById(userId);
-
       const agreement = await this.agreementRepository.preload({
         id,
         ...updateDto,
@@ -92,8 +94,14 @@ export class AgreementService {
         throw new NotFoundException(`Acuerdo (Agreement) con ID "${id}" no encontrado.`);
       }
 
-      agreement.modifiedBy = modifier;
-      return await this.agreementRepository.save(agreement);
+      const savedAgreement = await this.agreementRepository.save(agreement);
+      const newModification = this.modificationRepository.create({
+        agreement: savedAgreement,
+        modifier: modifier,
+      });
+      await this.modificationRepository.save(newModification);
+
+      return savedAgreement;
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }

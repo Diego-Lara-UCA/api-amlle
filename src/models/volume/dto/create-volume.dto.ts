@@ -6,7 +6,7 @@ import {
     IsUUID,
     IsEnum,
 } from 'class-validator';
-import { VolumeState } from '../types/enums/volume-status.enum';
+import { VolumeState } from '../enums/volume-status.enum';
 
 export class CreateVolumeDto {
     @IsInt()

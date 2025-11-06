@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AgreementEntity } from './entities/agreement.entity';
 import { UserModule } from '../user/user.module';
 import { MinutesModule } from '../minutes/minute.module';
+import { AgreementModification } from './entities/agreement-modification.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AgreementEntity]),
+        TypeOrmModule.forFeature([AgreementEntity, AgreementModification]),
         UserModule,
         MinutesModule,
     ],

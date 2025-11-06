@@ -10,8 +10,10 @@ import { CreateVolumeDto } from './dto/create-volume.dto';
 import { UpdateVolumeDto } from './dto/update-volume.dto';
 import { UserService } from 'src/models/user/user.service';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
-import { VolumeState } from './types/enums/volume-status.enum';
+import { VolumeState } from './enums/volume-status.enum';
 import { BookService } from '../book/book.service';
+import { VolumeModification } from './entities/volume-modification.entity';
+import { GetVolumeResponseDto } from './dto/get-volume-response.dto';
 
 @Injectable()
 export class VolumeService {
@@ -20,6 +22,8 @@ export class VolumeService {
     constructor(
         @InjectRepository(VolumeEntity)
         private readonly volumeRepository: Repository<VolumeEntity>,
+        @InjectRepository(VolumeModification)
+        private readonly modificationRepository: Repository<VolumeModification>,
         private readonly userService: UserService,
         private readonly booksService: BookService,
     ) { }
@@ -46,54 +50,87 @@ export class VolumeService {
         }
     };
 
-    findAllByBook = async (bookId: string): Promise<VolumeEntity[]> => {
+    findAll = async (): Promise<GetVolumeResponseDto[]> => {
         try {
-            return await this.volumeRepository.find({
-                where: { book: { id: bookId } },
-                relations: ['createdBy', 'modifiedBy'],
-                order: { number: 'ASC' },
+            // 2. Debemos cargar todas las relaciones para poder acceder a sus IDs
+            const volumes = await this.volumeRepository.find({
+                relations: [
+                    'book',
+                    'minutes',
+                    'createdBy',
+                    'modifications',
+                ],
+                order: {
+                    number: 'ASC'
+                }
             });
+
+            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
         }
     };
 
-
-    findOneById = async (id: string): Promise<VolumeEntity> => {
+    findAllByBook = async (bookId: string): Promise<GetVolumeResponseDto[]> => {
         try {
-            const volume = await this.volumeRepository.findOne({
-                where: { id },
-                relations: ['book', 'createdBy', 'modifiedBy', 'minutes'],
+            const volumes = await this.volumeRepository.find({
+                where: { book: { id: bookId } },
+                relations: [
+                    'book',
+                    'minutes',
+                    'createdBy',
+                    'modifications',
+                ],
+                order: { number: 'ASC' },
             });
 
-            if (!volume) {
-                throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
-            }
-
-            return volume;
+            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
         }
+    };
+
+    findOneById = async (id: string): Promise<VolumeEntity> => {
+        let volume: VolumeEntity | null;
+        try {
+            volume = await this.volumeRepository.findOne({
+                where: { id },
+                relations: ['book', 'createdBy', 'minutes', 'modifications'],
+            });
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger);
+        }
+
+        if (!volume) {
+            throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
+        }
+        return volume;
     };
 
     update = async (
         id: string,
-        updateVolumeDto: UpdateVolumeDto,
+        updateDto: UpdateVolumeDto,
         userId: string,
     ): Promise<VolumeEntity> => {
         try {
             const modifier = await this.userService.findOneById(userId);
             const volume = await this.volumeRepository.preload({
                 id,
-                ...updateVolumeDto,
+                ...updateDto,
             });
 
             if (!volume) {
                 throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
             }
 
-            volume.modifiedBy = modifier;
-            return await this.volumeRepository.save(volume);
+            const savedVolume = await this.volumeRepository.save(volume);
+            const newModification = this.modificationRepository.create({
+                volume: savedVolume,
+                modifier: modifier,
+            });
+            await this.modificationRepository.save(newModification);
+
+            return savedVolume;
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
         }
@@ -105,13 +142,22 @@ export class VolumeService {
         userId: string,
     ): Promise<VolumeEntity> => {
         try {
-            const modifier = await this.userService.findOneById(userId);
-            const volume = await this.findOneById(id);
+            const [modifier, volume] = await Promise.all([
+                this.userService.findOneById(userId),
+                this.findOneById(id),
+            ]);
 
             volume.status = status;
-            volume.modifiedBy = modifier;
 
-            return await this.volumeRepository.save(volume);
+            const savedVolume = await this.volumeRepository.save(volume);
+            const newModification = this.modificationRepository.create({
+                volume: savedVolume,
+                modifier: modifier,
+            });
+
+            await this.modificationRepository.save(newModification);
+
+            return savedVolume;
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
         }

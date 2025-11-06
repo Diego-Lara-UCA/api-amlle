@@ -17,6 +17,7 @@ import { Role } from 'src/models/user/enums/role.enum';
 import { User } from 'src/common/utils/decorators/user.decorator';
 import { UpdateVolumeStatusDto } from './dto/update-volume-status.dto';
 import { VolumeService } from './volume.service';
+import { Public } from 'src/common/utils/decorators/public.decorator';
 
 @Controller('api/volume')
 export class VolumeController {
@@ -26,6 +27,13 @@ export class VolumeController {
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   create(@Body() createVolumeDto: CreateVolumeDto, @User('userId') userId: string) {
     return this.volumesService.create(createVolumeDto, userId);
+  }
+
+  @Get('find-all')
+  //@Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  @Public()
+  findAll() {
+    return this.volumesService.findAll();
   }
 
   @Get('find-all-by-book/:bookId')

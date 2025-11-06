@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { Role } from '../enums/role.enum';
 import Argon2idUtils from 'src/common/utils/argon2id.util';
@@ -13,6 +14,10 @@ import { BookEntity } from 'src/models/book/entities/book.entity';
 import { VolumeEntity } from 'src/models/volume/entities/volume.entity';
 import { MinutesEntity } from 'src/models/minutes/entities/minute.entity';
 import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
+import { BookModification } from 'src/models/book/entities/book-modification.entity';
+import { VolumeModification } from 'src/models/volume/entities/volume-modification.entity';
+import { MinutesModification } from 'src/models/minutes/entities/minutes-modification.entity';
+import { AgreementModification } from 'src/models/agreement/entities/agreement-modification.entity';
 
 @Entity('usuarios')
 export class UserEntity {
@@ -44,17 +49,17 @@ export class UserEntity {
   @OneToMany(() => AgreementEntity, (agreement) => agreement.createdBy)
   createdAgreements: AgreementEntity[];
 
-  @OneToMany(() => BookEntity, (book) => book.modifiedBy)
-  booksModified: BookEntity[];
+  @OneToMany(() => BookModification, (mod) => mod.modifier)
+  bookModifications: BookModification[];
 
-  @OneToMany(() => VolumeEntity, (volume) => volume.modifiedBy)
-  volumesModified: VolumeEntity[];
+  @OneToMany(() => VolumeModification, (mod) => mod.modifier)
+  volumeModifications: VolumeModification[];
 
-  @OneToMany(() => MinutesEntity, (minute) => minute.modifiedBy)
-  minutesModified: MinutesEntity[];
+  @OneToMany(() => MinutesModification, (mod) => mod.modifier)
+  minutesModifications: MinutesModification[];
 
-  @OneToMany(() => AgreementEntity, (agreement) => agreement.modifiedBy)
-  agreementModified: AgreementEntity[];
+  @OneToMany(() => AgreementModification, (mod) => mod.modifier)
+  agreementModifications: AgreementModification[];
 
   @Column({ type: 'boolean', default: false })
   activo: boolean;

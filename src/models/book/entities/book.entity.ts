@@ -8,10 +8,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { BookState } from '../enums/book-state.enum';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { VolumeEntity } from 'src/models/volume/entities/volume.entity';
+import { BookModification } from './book-modification.entity';
 
 @Entity('libros')
 export class BookEntity {
@@ -48,11 +51,8 @@ export class BookEntity {
   })
   closingDate: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.booksModified, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'modified_by_id' })
-  modifiedBy: UserEntity;
+  @OneToMany(() => BookModification, (mod) => mod.book)
+  modifications: BookModification[];
 
   @OneToMany(() => VolumeEntity, (volume) => volume.book)
   volumes: VolumeEntity[];

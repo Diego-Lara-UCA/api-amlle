@@ -1,6 +1,7 @@
 import { MinutesEntity } from "src/models/minutes/entities/minute.entity";
 import { UserEntity } from "src/models/user/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { AgreementModification } from "./agreement-modification.entity";
 
 @Entity('acuerdos')
 export class AgreementEntity {
@@ -19,11 +20,8 @@ export class AgreementEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.agreementModified, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'modified_by_id' })
-  modifiedBy: UserEntity;
+  @OneToMany(() => AgreementModification, (mod) => mod.agreement)
+  modifications: AgreementModification[];
 
   @CreateDateColumn({
     type: 'timestamp',

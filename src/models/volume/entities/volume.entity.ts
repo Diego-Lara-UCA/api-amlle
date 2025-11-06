@@ -7,12 +7,15 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
-import { VolumeState } from '../types/enums/volume-status.enum';
+import { VolumeState } from '../enums/volume-status.enum';
 import { BookEntity } from 'src/models/book/entities/book.entity';
 import { MinutesEntity } from 'src/models/minutes/entities/minute.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { PdfSettings } from '../types/pdf-settings.type';
+import { VolumeModification } from './volume-modification.entity';
 
 @Entity('tomos')
 export class VolumeEntity {
@@ -65,11 +68,8 @@ export class VolumeEntity {
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
 
-  @ManyToOne(() => UserEntity, (user) => user.volumesModified, {
-    nullable: true,
-  })
-  @JoinColumn({ name: 'modified_by_id' })
-  modifiedBy: UserEntity;
+  @OneToMany(() => VolumeModification, (mod) => mod.volume)
+  modifications: VolumeModification[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;

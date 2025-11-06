@@ -5,10 +5,11 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookEntity } from './entities/book.entity';
 import { UserModule } from '../user/user.module';
+import { BookModification } from './entities/book-modification.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([BookEntity]),
+        TypeOrmModule.forFeature([BookEntity, BookModification]),
         UserModule
     ],
     controllers: [
