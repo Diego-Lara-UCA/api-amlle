@@ -52,45 +52,47 @@ export class VolumeService {
 
     findAll = async (): Promise<GetVolumeResponseDto[]> => {
         try {
-        const volumes = await this.volumeRepository.find({
-            relations: [
-            'book',
-            'minutes',
-            'minutes.agreements',
-            'createdBy',
-            'modifications',
-            ],
-            order: {
-            book: { name: 'ASC' },
-            number: 'ASC',
-            },
-        });
-        
-        return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
+            const volumes = await this.volumeRepository.find({
+                relations: [
+                    'book',
+                    'minutes',
+                    'minutes.agreements',
+                    'createdBy',
+                    'modifications',
+                    'modifications.modifier',
+                ],
+                order: {
+                    book: { name: 'ASC' },
+                    number: 'ASC',
+                },
+            });
+
+            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
 
         } catch (error) {
-        throw handleDatabaseError(error, this.logger);
+            throw handleDatabaseError(error, this.logger);
         }
     };
 
     findAllByBook = async (bookId: string): Promise<GetVolumeResponseDto[]> => {
         try {
-        const volumes = await this.volumeRepository.find({
-            where: { book: { id: bookId } },
-            relations: [
-            'book',
-            'minutes',
-            'minutes.agreements',
-            'createdBy',
-            'modifications',
-            ],
-            order: { number: 'ASC' },
-        });
+            const volumes = await this.volumeRepository.find({
+                where: { book: { id: bookId } },
+                relations: [
+                    'book',
+                    'minutes',
+                    'minutes.agreements',
+                    'createdBy',
+                    'modifications',
+                    'modifications.modifier',
+                ],
+                order: { number: 'ASC' },
+            });
 
-        return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
-        
+            return volumes.map(volume => GetVolumeResponseDto.fromEntity(volume));
+
         } catch (error) {
-        throw handleDatabaseError(error, this.logger);
+            throw handleDatabaseError(error, this.logger);
         }
     };
 
@@ -99,7 +101,7 @@ export class VolumeService {
         try {
             volume = await this.volumeRepository.findOne({
                 where: { id },
-                relations: ['book', 'createdBy', 'minutes', 'modifications'],
+                relations: ['book', 'createdBy', 'minutes', 'modifications', 'modifications.modifier'],
             });
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
@@ -111,34 +113,34 @@ export class VolumeService {
         return volume;
     };
 
-update = async (
-    id: string,
-    updateDto: UpdateVolumeDto,
-    userId: string,
-  ): Promise<VolumeEntity> => {
-    try {
-      const modifier = await this.userService.findOneById(userId);
-      const volume = await this.volumeRepository.preload({
-        id,
-        ...updateDto,
-      });
+    update = async (
+        id: string,
+        updateDto: UpdateVolumeDto,
+        userId: string,
+    ): Promise<VolumeEntity> => {
+        try {
+            const modifier = await this.userService.findOneById(userId);
+            const volume = await this.volumeRepository.preload({
+                id,
+                ...updateDto,
+            });
 
-      if (!volume) {
-        throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
-      }
+            if (!volume) {
+                throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
+            }
 
-      const savedVolume = await this.volumeRepository.save(volume);
-      const newModification = this.modificationRepository.create({
-        volume: savedVolume,
-        modifier: modifier,
-      });
-      await this.modificationRepository.save(newModification);
+            const savedVolume = await this.volumeRepository.save(volume);
+            const newModification = this.modificationRepository.create({
+                volume: savedVolume,
+                modifier: modifier,
+            });
+            await this.modificationRepository.save(newModification);
 
-      return savedVolume;
-    } catch (error) {
-      throw handleDatabaseError(error, this.logger);
-    }
-  };
+            return savedVolume;
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger);
+        }
+    };
     updateStatus = async (
         id: string,
         status: VolumeState,

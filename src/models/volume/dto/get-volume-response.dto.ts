@@ -48,7 +48,7 @@ export class GetVolumeResponseDto {
       createdByName: volume.createdBy.nombre,
       minutesIds: volume.minutes ? volume.minutes.map(minute => minute.id) : [],
       modificationIds: volume.modifications ? volume.modifications.map(mod => mod.id) : [],
-      modificationName:volume.modifications ? volume.modifications.map(mod => mod.modifier.nombre) : [],
+      modificationName: volume.modifications ? volume.modifications.map(mod => mod.modifier.nombre) : [],
       modificationDate: volume.modifications ? volume.modifications.map(mod => mod.modificationDate) : [],
       agreementCount: totalAgreements,
     };
