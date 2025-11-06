@@ -30,8 +30,7 @@ export class VolumeController {
   }
 
   @Get('find-all')
-  //@Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  @Public()
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findAll() {
     return this.volumesService.findAll();
   }

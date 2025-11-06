@@ -18,6 +18,7 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { User } from 'src/common/utils/decorators/user.decorator';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { UpdateBookStatusDto } from './dto/update-book-status.dto';
+import { Public } from 'src/common/utils/decorators/public.decorator';
 
 @Controller("api/book")
 export class BookController {
@@ -32,7 +33,8 @@ export class BookController {
     };
 
     @Get("all")
-    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+    //@Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+    @Public()
     findAll() {
         return this.booksService.findAll();
     }
