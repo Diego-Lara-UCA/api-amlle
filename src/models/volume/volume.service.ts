@@ -111,35 +111,34 @@ export class VolumeService {
         return volume;
     };
 
-    update = async (
-        id: string,
-        updateDto: UpdateVolumeDto,
-        userId: string,
-    ): Promise<VolumeEntity> => {
-        try {
-            const modifier = await this.userService.findOneById(userId);
-            const volume = await this.volumeRepository.preload({
-                id,
-                ...updateDto,
-            });
+update = async (
+    id: string,
+    updateDto: UpdateVolumeDto,
+    userId: string,
+  ): Promise<VolumeEntity> => {
+    try {
+      const modifier = await this.userService.findOneById(userId);
+      const volume = await this.volumeRepository.preload({
+        id,
+        ...updateDto,
+      });
 
-            if (!volume) {
-                throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
-            }
+      if (!volume) {
+        throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
+      }
 
-            const savedVolume = await this.volumeRepository.save(volume);
-            const newModification = this.modificationRepository.create({
-                volume: savedVolume,
-                modifier: modifier,
-            });
-            await this.modificationRepository.save(newModification);
+      const savedVolume = await this.volumeRepository.save(volume);
+      const newModification = this.modificationRepository.create({
+        volume: savedVolume,
+        modifier: modifier,
+      });
+      await this.modificationRepository.save(newModification);
 
-            return savedVolume;
-        } catch (error) {
-            throw handleDatabaseError(error, this.logger);
-        }
-    };
-
+      return savedVolume;
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
     updateStatus = async (
         id: string,
         status: VolumeState,
@@ -160,7 +159,6 @@ export class VolumeService {
             });
 
             await this.modificationRepository.save(newModification);
-
             return savedVolume;
         } catch (error) {
             throw handleDatabaseError(error, this.logger);

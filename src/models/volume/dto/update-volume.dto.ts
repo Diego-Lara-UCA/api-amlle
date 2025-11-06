@@ -1,18 +1,44 @@
 import {
-    IsInt,
-    IsOptional,
-    IsPositive,
-    IsEnum,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsEnum,
+  IsString,
+  ValidateNested,
+  IsDateString,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { VolumeState } from '../enums/volume-status.enum';
+import { PdfSettings } from '../types/pdf-settings.type';
 
 export class UpdateVolumeDto {
-    @IsOptional()
-    @IsInt()
-    @IsPositive()
-    number?: number;
+  @IsOptional()
+  @IsString()
+  name?: string;
 
-    @IsOptional()
-    @IsEnum(VolumeState)
-    status?: VolumeState;
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PdfSettings)
+  pdfSettings?: PdfSettings;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  number?: number;
+
+  @IsOptional()
+  @IsInt()
+  pageCount?: number;
+
+  @IsOptional()
+  @IsEnum(VolumeState)
+  status?: VolumeState;
+  
+  @IsOptional()
+  @IsDateString()
+  authorizationDate?: Date;
+
+  @IsOptional()
+  @IsDateString()
+  closingDate?: Date;
 }

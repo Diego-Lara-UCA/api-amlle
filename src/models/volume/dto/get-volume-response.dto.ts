@@ -15,6 +15,7 @@ export class GetVolumeResponseDto {
   updatedAt: Date;
 
   bookId: string;
+  bookName: string;
   createdById: string;
   minutesIds: string[];
   agreementCount: number;
@@ -38,6 +39,7 @@ export class GetVolumeResponseDto {
       closingDate: volume.closingDate,
       createdAt: volume.createdAt,
       updatedAt: volume.updatedAt,
+      bookName: volume.book.name,
       bookId: volume.book?.id,
       createdById: volume.createdBy?.id,
       minutesIds: volume.minutes ? volume.minutes.map(minute => minute.id) : [],
