@@ -69,7 +69,7 @@ export class MinutesService {
     try {
       return await this.minutesRepository.find({
         where: { volume: { id: volumeId } },
-        relations: ['createdBy', 'modifiedBy'],
+        relations: ['createdBy', 'modifications'],
         order: { createdAt: 'ASC' },
       });
     } catch (error) {
@@ -82,7 +82,7 @@ export class MinutesService {
       const minutes = await this.minutesRepository.findOne({
         where: { id },
         relations: [
-          'volume', 'createdBy', 'modifiedBy', 'participants', 'agreements',
+          'volume', 'createdBy', 'modifications', 'participants', 'agreements',
         ],
       });
       if (!minutes) {

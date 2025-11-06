@@ -54,7 +54,7 @@ export class AgreementService {
     try {
       return await this.agreementRepository.find({
         where: { minutes: { id: minutesId } },
-        relations: ['createdBy', 'modifiedBy'],
+        relations: ['createdBy', 'modifications'],
         order: { createdAt: 'ASC' },
       });
     } catch (error) {
@@ -66,7 +66,7 @@ export class AgreementService {
     try {
       const agreement = await this.agreementRepository.findOne({
         where: { id },
-        relations: ['minutes', 'createdBy', 'modifiedBy'],
+        relations: ['minutes', 'createdBy', 'modifications'],
       });
 
       if (!agreement) {

@@ -41,7 +41,7 @@ export class BookService {
     findAll = async (): Promise<BookEntity[]> => {
         try {
             return await this.bookRepository.find({
-                relations: ['createdBy', 'modifiedBy'],
+                relations: ['createdBy', 'modifications'],
             });
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
@@ -53,7 +53,7 @@ export class BookService {
         try {
             book = await this.bookRepository.findOne({
                 where: { id },
-                relations: ['createdBy', 'modifiedBy', 'volumes'],
+                relations: ['createdBy', 'modifications', 'volumes'],
             });
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
