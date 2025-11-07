@@ -91,6 +91,7 @@ export class UserController {
 
   @Patch('change-role/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
+  //@Public()
   ChangeRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changeRoleDto: ChangeRoleDto,

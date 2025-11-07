@@ -37,26 +37,17 @@ export class MinutesService {
     userId: string,
   ): Promise<MinutesEntity> => {
     try {
-      const { volumeId, participantIds, ...minutesData } = createDto;
+      const { volumeId, ...minutesData } = createDto;
 
       const [user, volume] = await Promise.all([
         this.userService.findOneById(userId),
         this.volumesService.findOneById(volumeId),
       ]);
 
-      let participants: ParticipantsEntity[] = [];
-      if (participantIds && participantIds.length > 0) {
-        participants = await this.findParticipantsByIds(participantIds);
-        if (participants.length !== participantIds.length) {
-          throw new NotFoundException('Uno o más participantes no fueron encontrados.');
-        }
-      }
-
       const newMinutes = this.minutesRepository.create({
         ...minutesData,
         volume: volume,
-        createdBy: user,
-        participants: participants,
+        createdBy: user
       });
 
       return await this.minutesRepository.save(newMinutes);

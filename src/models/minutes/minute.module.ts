@@ -8,10 +8,11 @@ import { VolumeModule } from '../volume/volume.module';
 import { UserService } from '../user/user.service';
 import { UserModule } from '../user/user.module';
 import { MinutesModification } from './entities/minutes-modification.entity';
+import { ParticipantAttendance } from './entities/participant-attendance.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([MinutesEntity, ParticipantsEntity, MinutesModification]),
+        TypeOrmModule.forFeature([MinutesEntity, ParticipantsEntity, MinutesModification, ParticipantAttendance]),
         VolumeModule,
         UserModule
     ],

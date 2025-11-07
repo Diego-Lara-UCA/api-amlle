@@ -16,6 +16,7 @@ import { ParticipantsEntity } from './participants.entity';
 import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { MinutesModification } from './minutes-modification.entity';
+import { ParticipantAttendance } from './participant-attendance.entity';
 
 @Entity('actas')
 export class MinutesEntity {
@@ -48,13 +49,10 @@ export class MinutesEntity {
   @JoinColumn({ name: 'volume_id' })
   volume: VolumeEntity;
 
-  @ManyToMany(() => ParticipantsEntity, (participant) => participant.minutes)
-  @JoinTable({
-    name: 'minutes_participants',
-    joinColumn: { name: 'minutes_id' },
-    inverseJoinColumn: { name: 'participant_id' },
+  @OneToMany(() => ParticipantAttendance, (attendance) => attendance.minutes, {
+    cascade: true,
   })
-  participants: ParticipantsEntity[];
+  attendance: ParticipantAttendance[];
 
   @OneToMany(() => AgreementEntity, (agreement) => agreement.minutes)
   agreements: AgreementEntity[];

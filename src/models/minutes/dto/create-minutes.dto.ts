@@ -13,9 +13,8 @@ export class CreateMinutesDto {
   @IsNotEmpty()
   volumeId: string;
 
-  @IsString()
   @IsNotEmpty()
-  number: string;
+  actNumber: number;
 
   @IsDateString()
   meetingDate: Date;
@@ -26,7 +25,7 @@ export class CreateMinutesDto {
 
   @IsString()
   @IsOptional()
-  agenda?: string;
+  name?: string;
 
   @IsString()
   @IsOptional()
@@ -34,9 +33,4 @@ export class CreateMinutesDto {
 
   @IsOptional()
   status?: MinutesType;
-
-  @IsArray()
-  @IsUUID('all', { each: true })
-  @IsOptional()
-  participantIds?: string[];
 }

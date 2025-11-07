@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { MinutesEntity } from "./minute.entity";
+import { ParticipantAttendance } from "./participant-attendance.entity";
 
 @Entity('participantes')
 export class ParticipantsEntity {
@@ -15,7 +16,10 @@ export class ParticipantsEntity {
     default: false,
   })
   isSubstitute: boolean;
-  
-  @ManyToMany(() => MinutesEntity, (minutes) => minutes.participants)
-  minutes: MinutesEntity;
+
+  @OneToMany(() => ParticipantAttendance, (attendance) => attendance.attendee)
+  attendances: ParticipantAttendance[];
+
+  @OneToMany(() => ParticipantAttendance, (attendance) => attendance.substitutedOwner)
+  substitutions: ParticipantAttendance[];
 }
