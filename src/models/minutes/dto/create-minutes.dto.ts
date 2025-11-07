@@ -6,7 +6,7 @@ import {
   IsDateString,
   IsArray,
 } from 'class-validator';
-import { MinutesState } from '../enums/minutes-status.enum';
+import { MinutesType } from '../enums/minutes-status.enum';
 
 export class CreateMinutesDto {
   @IsUUID()
@@ -33,7 +33,7 @@ export class CreateMinutesDto {
   bodyContent?: string;
 
   @IsOptional()
-  status?: MinutesState;
+  status?: MinutesType;
 
   @IsArray()
   @IsUUID('all', { each: true })

@@ -1,6 +1,5 @@
-export enum MinutesState {
-    BORRADOR = "BORRADOR",
-    PENDIENTE = "PENDIENTE",
-    FINALIZADO = "FINALIZADO",
-    ARCHIVADO = "ARCHIVADO"
+export enum MinutesType {
+    ORDINARIA = "ORDINARIA",
+    EXTRAORDINARIA = "EXTRAORDINARIA",
+    ESPECIAL = "ESPECIAL",
 }

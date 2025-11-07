@@ -11,7 +11,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { VolumeEntity } from 'src/models/volume/entities/volume.entity';
-import { MinutesState } from '../enums/minutes-status.enum';
+import { MinutesType } from '../enums/minutes-status.enum';
 import { ParticipantsEntity } from './participants.entity';
 import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
@@ -23,7 +23,10 @@ export class MinutesEntity {
   id: string;
 
   @Column({ type: 'varchar', length: 100 })
-  number: string;
+  name: string;
+
+  @Column({ type: 'int' })
+  actNumber: number;
 
   @Column({ name: 'meeting_date', type: 'date' })
   meetingDate: Date;
@@ -31,18 +34,15 @@ export class MinutesEntity {
   @Column({ name: 'meeting_time', type: 'time', nullable: true })
   meetingTime: string;
 
-  @Column({ name: 'agenda', type: 'text', nullable: true })
-  agenda: string;
-
   @Column({ name: 'description_html', type: 'longtext', nullable: true })
   bodyContent: string;
 
   @Column({
     type: 'enum',
-    enum: MinutesState,
-    default: MinutesState.BORRADOR,
+    enum: MinutesType,
+    default: MinutesType.ORDINARIA,
   })
-  status: MinutesState;
+  status: MinutesType;
 
   @ManyToOne(() => VolumeEntity, (volume) => volume.minutes, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn({ name: 'volume_id' })

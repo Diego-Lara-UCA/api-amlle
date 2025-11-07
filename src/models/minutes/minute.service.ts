@@ -11,7 +11,7 @@ import { UserService } from 'src/models/user/user.service';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
 import { CreateMinutesDto } from './dto/create-minutes.dto';
 import { UpdateMinutesDto } from './dto/update-minutes.dto';
-import { MinutesState } from './enums/minutes-status.enum';
+import { MinutesType } from './enums/minutes-status.enum';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { VolumeService } from '../volume/volume.service';
@@ -125,7 +125,7 @@ export class MinutesService {
 
   updateMinutesStatus = async (
     id: string,
-    status: MinutesState,
+    status: MinutesType,
     userId: string,
   ): Promise<MinutesEntity> => {
     try {

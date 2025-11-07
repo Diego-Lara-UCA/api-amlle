@@ -432,7 +432,7 @@ Endpoints para la administración de actas y la lista maestra de participantes.
       "meetingTime": "string (opcional)",
       "agenda": "string (opcional)",
       "bodyContent": "string (opcional)",
-      "status": "MinutesState (enum, opcional)",
+      "status": "MinutesType (enum, opcional)",
       "participantIds": "string[] (array de UUIDs, opcional)"
     }
     ```
@@ -479,7 +479,7 @@ Endpoints para la administración de actas y la lista maestra de participantes.
 * **Body (DTO):** `UpdateMinutesStatusDto`
     ```json
     {
-      "status": "MinutesState (enum)"
+      "status": "MinutesType (enum)"
     }
     ```
 

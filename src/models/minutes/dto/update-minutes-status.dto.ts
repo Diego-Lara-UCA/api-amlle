@@ -1,8 +1,8 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { MinutesState } from '../enums/minutes-status.enum';
+import { MinutesType } from '../enums/minutes-status.enum';
 
 export class UpdateMinutesStatusDto {
-  @IsEnum(MinutesState)
+  @IsEnum(MinutesType)
   @IsNotEmpty()
-  status: MinutesState;
+  status: MinutesType;
 }
