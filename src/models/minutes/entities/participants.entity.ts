@@ -10,12 +10,14 @@ export class ParticipantsEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({
-    name: 'is_substitute',
-    type: 'boolean',
-    default: false,
-  })
-  isSubstitute: boolean;
+  // @Column({
+  //   name: 'is_substitute',
+  //   type: 'boolean',
+  //   default: false,
+  // })
+  // isSubstitute: boolean; @TODO: Los propietarios tienen subsitutos propios (tabla propietarios y tabla substituto?)
+
+
 
   @OneToMany(() => ParticipantAttendance, (attendance) => attendance.attendee)
   attendances: ParticipantAttendance[];

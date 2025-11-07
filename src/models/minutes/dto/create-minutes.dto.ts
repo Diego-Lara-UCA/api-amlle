@@ -16,21 +16,18 @@ export class CreateMinutesDto {
   @IsNotEmpty()
   actNumber: number;
 
+  @IsString()
+  @IsOptional()
+  name?: string;
+
   @IsDateString()
+  @IsOptional()
   meetingDate: Date;
 
   @IsString()
   @IsOptional()
   meetingTime?: string;
 
-  @IsString()
   @IsOptional()
-  name?: string;
-
-  @IsString()
-  @IsOptional()
-  bodyContent?: string;
-
-  @IsOptional()
-  status?: MinutesType;
+  type?: MinutesType;
 }
