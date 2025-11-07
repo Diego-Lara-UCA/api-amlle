@@ -2,12 +2,21 @@ import {
   IsString,
   IsOptional,
   IsDateString,
+  IsArray,
+  ValidateNested,
+  IsInt,
+  IsPositive,
+  IsEnum,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { MinutesType } from '../enums/minutes-status.enum';
+import { AttendanceItemDto } from './attendance-item.dto';
 
 export class UpdateMinutesDto {
-  @IsString()
+  @IsInt()
+  @IsPositive()
   @IsOptional()
-  number?: string;
+  actNumber?: number;
 
   @IsDateString()
   @IsOptional()
@@ -24,4 +33,14 @@ export class UpdateMinutesDto {
   @IsString()
   @IsOptional()
   bodyContent?: string;
+
+  @IsEnum(MinutesType)
+  @IsOptional()
+  status?: MinutesType;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => AttendanceItemDto)
+  @IsOptional()
+  attendanceList?: AttendanceItemDto[];
 }

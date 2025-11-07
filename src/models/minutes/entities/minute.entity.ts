@@ -12,11 +12,10 @@ import {
 } from 'typeorm';
 import { VolumeEntity } from 'src/models/volume/entities/volume.entity';
 import { MinutesType } from '../enums/minutes-status.enum';
-import { ParticipantsEntity } from './participants.entity';
 import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { MinutesModification } from './minutes-modification.entity';
-import { ParticipantAttendance } from './participant-attendance.entity';
+import { AttendanceEntity } from './attendance.entity';
 
 @Entity('actas')
 export class MinutesEntity {
@@ -49,10 +48,8 @@ export class MinutesEntity {
   @JoinColumn({ name: 'volume_id' })
   volume: VolumeEntity;
 
-  @OneToMany(() => ParticipantAttendance, (attendance) => attendance.minutes, {
-    cascade: true,
-  })
-  attendance: ParticipantAttendance[];
+  @OneToMany(() => AttendanceEntity, (attendance) => attendance.minutes)
+  attendanceList: AttendanceEntity[];
 
   @OneToMany(() => AgreementEntity, (agreement) => agreement.minutes)
   agreements: AgreementEntity[];

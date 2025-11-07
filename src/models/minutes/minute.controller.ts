@@ -12,17 +12,22 @@ import {
 } from '@nestjs/common';
 import { CreateMinutesDto } from './dto/create-minutes.dto';
 import { UpdateMinutesDto } from './dto/update-minutes.dto';
-import { UpdateMinutesStatusDto } from './dto/update-minutes-status.dto';
-import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Roles } from 'src/common/utils/decorators/roles.decorator';
 import { Role } from 'src/models/user/enums/role.enum';
 import { User } from 'src/common/utils/decorators/user.decorator';
 import { MinutesService } from './minute.service';
+import { CreatePropietarioDto } from './dto/create-propietario.dto';
+import { UpdatePropietarioDto } from './dto/update-propietario.dto';
+import { CreateSubstitutoDto } from './dto/create-substituto.dto';
+import { UpdateSubstitutoDto } from './dto/update-substituto.dto';
+import { AssignSubstitutoDto } from './dto/assign-substituto.dto';
+import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto';
 
 @Controller('api/')
 export class MinuteController {
-  constructor(private readonly minutesService: MinutesService) {}
+  constructor(
+    private readonly minutesService: MinutesService
+  ) { }
 
   @Post('minutes/create')
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
@@ -55,16 +60,6 @@ export class MinuteController {
     return this.minutesService.updateMinutes(id, updateDto, userId);
   }
 
-  @Patch('minutes/update-status/:id/status')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  updateMinutesStatus(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateStatusDto: UpdateMinutesStatusDto,
-    @User('userId') userId: string,
-  ) {
-    return this.minutesService.updateMinutesStatus(id, updateStatusDto.status, userId);
-  }
-
   @Delete('minutes/delete/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -72,37 +67,103 @@ export class MinuteController {
     return this.minutesService.removeMinutes(id);
   }
 
-  @Post('participants/crate')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  createParticipant(@Body() dto: CreateParticipantDto) {
-    return this.minutesService.createParticipant(dto);
-  }
-
-  @Get('participants/find-all')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  findAllParticipants() {
-    return this.minutesService.findAllParticipants();
-  }
-
-  @Get('participants/find/:id')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  findOneParticipant(@Param('id', ParseUUIDPipe) id: string) {
-    return this.minutesService.findOneParticipant(id);
-  }
-
-  @Patch('participants/update/:id')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  updateParticipant(
+  @Patch('update-name-number/:id')
+  @Roles(Role.ADMIN)
+  updateNameAndNumber(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateParticipantDto,
+    @Body() dto: UpdateMinutesNameNumberDto,
+    @User('userId') userId: string,
   ) {
-    return this.minutesService.updateParticipant(id, dto);
+    return this.minutesService.updateNameAndNumber(id, dto, userId);
   }
 
-  @Delete('participants/delete/:id')
+  @Post('participants/propietarios')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  createPropietario(@Body() dto: CreatePropietarioDto) {
+    return this.minutesService.createPropietario(dto);
+  }
+
+  @Get('participants/propietarios')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findAllPropietarios() {
+    return this.minutesService.findAllPropietarios();
+  }
+
+  @Get('participants/propietarios/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findOnePropietario(@Param('id', ParseUUIDPipe) id: string) {
+    return this.minutesService.findOnePropietario(id);
+  }
+
+  @Patch('participants/propietarios/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  updatePropietario(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePropietarioDto,
+  ) {
+    return this.minutesService.updatePropietario(id, dto);
+  }
+
+  @Delete('participants/propietarios/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeParticipant(@Param('id', ParseUUIDPipe) id: string) {
-    return this.minutesService.removeParticipant(id);
+  removePropietario(@Param('id', ParseUUIDPipe) id: string) {
+    return this.minutesService.removePropietario(id);
+  }
+
+  @Post('participants/substitutos')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  createSubstituto(@Body() dto: CreateSubstitutoDto) {
+    return this.minutesService.createSubstituto(dto);
+  }
+
+  @Get('participants/substitutos')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findAllSubstitutos() {
+    return this.minutesService.findAllSubstitutos();
+  }
+
+  @Get('participants/substitutos/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findOneSubstituto(@Param('id', ParseUUIDPipe) id: string) {
+    return this.minutesService.findOneSubstituto(id);
+  }
+
+  @Patch('participants/substitutos/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  updateSubstituto(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateSubstitutoDto,
+  ) {
+    return this.minutesService.updateSubstituto(id, dto);
+  }
+
+  @Delete('participants/substitutos/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeSubstituto(@Param('id', ParseUUIDPipe) id: string) {
+    return this.minutesService.removeSubstituto(id);
+  }
+
+  @Post('participants/propietarios/:id/assign-substituto')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  assignSubstituto(
+    @Param('id', ParseUUIDPipe) propietarioId: string,
+    @Body() dto: AssignSubstitutoDto,
+  ) {
+    return this.minutesService.assignSubstituto(propietarioId, dto.substitutoId);
+  }
+
+  @Delete('participants/propietarios/:id/remove-substituto/:substitutoId')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeSubstitutoFromPropietario(
+    @Param('id', ParseUUIDPipe) propietarioId: string,
+    @Param('substitutoId', ParseUUIDPipe) substitutoId: string,
+  ) {
+    return this.minutesService.removeSubstitutoFromPropietario(
+      propietarioId,
+      substitutoId,
+    );
   }
 }

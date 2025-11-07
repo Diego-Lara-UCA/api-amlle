@@ -2,32 +2,43 @@ import {
   Injectable,
   NotFoundException,
   Logger,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm'; // Importar 'In'
+import { Repository, In, DataSource } from 'typeorm'; // Importar 'In'
 import { MinutesEntity } from './entities/minute.entity';
-import { ParticipantsEntity } from './entities/participants.entity';
 import { UserService } from 'src/models/user/user.service';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
 import { CreateMinutesDto } from './dto/create-minutes.dto';
 import { UpdateMinutesDto } from './dto/update-minutes.dto';
-import { MinutesType } from './enums/minutes-status.enum';
-import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { VolumeService } from '../volume/volume.service';
 import { MinutesModification } from './entities/minutes-modification.entity';
+import { PropietarioEntity } from './entities/propietario.entity';
+import { SubstitutoEntity } from './entities/substituto.entity';
+import { CreatePropietarioDto } from './dto/create-propietario.dto';
+import { UpdatePropietarioDto } from './dto/update-propietario.dto';
+import { CreateSubstitutoDto } from './dto/create-substituto.dto';
+import { UpdateSubstitutoDto } from './dto/update-substituto.dto';
+import { AttendanceEntity } from './entities/attendance.entity';
+import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto';
+import { GetMinutesResponseDto } from './dto/get-minutes-response.dto';
 
 @Injectable()
 export class MinutesService {
   private readonly logger = new Logger('MinutesService');
 
   constructor(
+    private readonly dataSource: DataSource,
     @InjectRepository(MinutesEntity)
     private readonly minutesRepository: Repository<MinutesEntity>,
-    @InjectRepository(ParticipantsEntity)
-    private readonly participantRepository: Repository<ParticipantsEntity>,
     @InjectRepository(MinutesModification)
     private readonly modificationRepository: Repository<MinutesModification>,
+    @InjectRepository(PropietarioEntity)
+    private readonly propietarioRepository: Repository<PropietarioEntity>,
+    @InjectRepository(SubstitutoEntity)
+    private readonly substitutoRepository: Repository<SubstitutoEntity>,
+    @InjectRepository(AttendanceEntity)
+    private readonly attendanceRepository: Repository<AttendanceEntity>,
     private readonly userService: UserService,
     private readonly volumesService: VolumeService,
   ) { }
@@ -38,31 +49,42 @@ export class MinutesService {
   ): Promise<MinutesEntity> => {
     try {
       const { volumeId, ...minutesData } = createDto;
-
       const [user, volume] = await Promise.all([
         this.userService.findOneById(userId),
         this.volumesService.findOneById(volumeId),
       ]);
-
       const newMinutes = this.minutesRepository.create({
         ...minutesData,
         volume: volume,
         createdBy: user
       });
-
       return await this.minutesRepository.save(newMinutes);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  findAllMinutesByVolume = async (volumeId: string): Promise<MinutesEntity[]> => {
+  findAllMinutesByVolume = async (volumeId: string): Promise<GetMinutesResponseDto[]> => {
     try {
-      return await this.minutesRepository.find({
+      const minutesList = await this.minutesRepository.find({
         where: { volume: { id: volumeId } },
-        relations: ['createdBy', 'modifications'],
-        order: { createdAt: 'ASC' },
+        relations: [
+          'volume',
+          'createdBy',
+          'agreements',
+          'modifications',
+          'modifications.modifier',
+          'attendanceList',
+          'attendanceList.propietarioConvocado',
+          'attendanceList.substitutoAsistente',
+        ],
+        order: {
+          actNumber: 'ASC',
+        },
       });
+
+      return minutesList.map(minutes => GetMinutesResponseDto.fromEntity(minutes));
+
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -73,7 +95,13 @@ export class MinutesService {
       const minutes = await this.minutesRepository.findOne({
         where: { id },
         relations: [
-          'volume', 'createdBy', 'modifications', 'participants', 'agreements',
+          'volume',
+          'createdBy',
+          'modifications',
+          'agreements',
+          'attendanceList',
+          'attendanceList.propietarioConvocado',
+          'attendanceList.substitutoAsistente',
         ],
       });
       if (!minutes) {
@@ -91,51 +119,110 @@ export class MinutesService {
     userId: string,
   ): Promise<MinutesEntity> => {
     try {
-      const modifier = await this.userService.findOneById(userId);
-      const minutes = await this.minutesRepository.preload({
-        id,
-        ...updateDto,
+      const updatedMinutes = await this.dataSource.transaction(async (manager) => {
+        const minutesRepo = manager.getRepository(MinutesEntity);
+        const attendanceRepo = manager.getRepository(AttendanceEntity);
+        const modificationRepo = manager.getRepository(MinutesModification);
+
+        const modifier = await this.userService.findOneById(userId);
+        const minutes = await minutesRepo.findOneBy({ id });
+
+        if (!minutes) {
+          throw new NotFoundException(`Acta (Minutes) con ID "${id}" no encontrada.`);
+        }
+
+        if (updateDto.attendanceList) {
+          await attendanceRepo.delete({ minutes: { id: id } });
+          const newAttendance = updateDto.attendanceList.map((item) =>
+            attendanceRepo.create({
+              minutes: minutes,
+              propietarioConvocado: { id: item.propietarioConvocadoId },
+              asistioPropietario: item.asistioPropietario,
+              substitutoAsistente: item.substitutoAsistenteId
+                ? { id: item.substitutoAsistenteId }
+                : undefined,
+            }),
+          );
+          await attendanceRepo.save(newAttendance);
+        }
+        const { attendanceList, ...updatableData } = updateDto;
+
+        const updatedMinutesData = minutesRepo.create({
+          ...minutes,
+          ...updatableData,
+        });
+        const savedMinutes = await minutesRepo.save(updatedMinutesData);
+
+        const newModification = modificationRepo.create({
+          minutes: savedMinutes,
+          modifier: modifier,
+        });
+        await modificationRepo.save(newModification);
+
+        return savedMinutes;
       });
 
-      if (!minutes) {
-        throw new NotFoundException(`Acta (Minutes) con ID "${id}" no encontrada.`);
-      }
-
-      const savedMinutes = await this.minutesRepository.save(minutes);
-      const newModification = this.modificationRepository.create({
-        minutes: savedMinutes,
-        modifier: modifier,
-      });
-      await this.modificationRepository.save(newModification);
-
-      return savedMinutes;
+      return this.findOneMinutes(updatedMinutes.id);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  updateMinutesStatus = async (
+  updateNameAndNumber = async (
     id: string,
-    status: MinutesType,
+    dto: UpdateMinutesNameNumberDto,
     userId: string,
   ): Promise<MinutesEntity> => {
     try {
-      const [modifier, minutes] = await Promise.all([
-        this.userService.findOneById(userId),
-        this.findOneMinutes(id),
-      ]);
+      const updatedTargetMinute = await this.dataSource.transaction(async (manager) => {
+        const minutesRepo = manager.getRepository(MinutesEntity);
+        const modificationRepo = manager.getRepository(MinutesModification);
 
-      minutes.status = status;
+        const [modifier, targetMinute] = await Promise.all([
+          this.userService.findOneById(userId),
+          minutesRepo.findOne({ where: { id }, relations: ['volume'] }),
+        ]);
 
-      const savedMinutes = await this.minutesRepository.save(minutes);
-      const newModification = this.modificationRepository.create({
-        minutes: savedMinutes,
-        modifier: modifier,
+        if (!targetMinute) {
+          throw new NotFoundException(`Acta (Minutes) con ID "${id}" no encontrada.`);
+        }
+
+        const originalName = targetMinute.name;
+        const originalActNumber = targetMinute.actNumber;
+        const existingMinute = await minutesRepo.findOne({
+          where: {
+            name: dto.name,
+            actNumber: dto.actNumber,
+            volume: { id: targetMinute.volume.id },
+          },
+        });
+
+        targetMinute.name = dto.name;
+        targetMinute.actNumber = dto.actNumber;
+
+        const modificationsToSave: MinutesModification[] = [];
+
+        if (existingMinute) {
+          existingMinute.name = originalName;
+          existingMinute.actNumber = originalActNumber;
+
+          await minutesRepo.save([targetMinute, existingMinute]);
+
+          modificationsToSave.push(
+            modificationRepo.create({ minutes: targetMinute, modifier: modifier }),
+            modificationRepo.create({ minutes: existingMinute, modifier: modifier })
+          );
+
+        } else {
+          await minutesRepo.save(targetMinute);
+          modificationsToSave.push(
+            modificationRepo.create({ minutes: targetMinute, modifier: modifier })
+          );
+        }
+        await modificationRepo.save(modificationsToSave);
+        return targetMinute;
       });
-      
-      await this.modificationRepository.save(newModification);
-
-      return savedMinutes;
+      return this.findOneMinutes(updatedTargetMinute.id);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -152,65 +239,163 @@ export class MinutesService {
     }
   };
 
-  createParticipant = async (dto: CreateParticipantDto): Promise<ParticipantsEntity> => {
+
+  createPropietario = async (dto: CreatePropietarioDto): Promise<PropietarioEntity> => {
     try {
-      const newParticipant = this.participantRepository.create(dto);
-      return await this.participantRepository.save(newParticipant);
+      const newPropietario = this.propietarioRepository.create(dto);
+      return await this.propietarioRepository.save(newPropietario);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  findAllParticipants = async (): Promise<ParticipantsEntity[]> => {
+  findAllPropietarios = async (): Promise<PropietarioEntity[]> => {
     try {
-      return await this.participantRepository.find();
+      return await this.propietarioRepository.find({
+        relations: ['approvedSubstitutes'],
+      });
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  findOneParticipant = async (id: string): Promise<ParticipantsEntity> => {
+  findOnePropietario = async (id: string): Promise<PropietarioEntity> => {
     try {
-      const participant = await this.participantRepository.findOneBy({ id });
-      if (!participant) {
-        throw new NotFoundException(`Participante con ID "${id}" no encontrado.`);
+      const propietario = await this.propietarioRepository.findOne({
+        where: { id },
+        relations: ['approvedSubstitutes', 'attendanceRecords'],
+      });
+      if (!propietario) {
+        throw new NotFoundException(`Propietario con ID "${id}" no encontrado.`);
       }
-      return participant;
+      return propietario;
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  findParticipantsByIds = async (ids: string[]): Promise<ParticipantsEntity[]> => {
-    if (ids.length === 0) return [];
-    try {
-      return await this.participantRepository.findBy({ id: In(ids) });
-    } catch (error) {
-      throw handleDatabaseError(error, this.logger);
-    }
-  };
-
-  updateParticipant = async (
+  updatePropietario = async (
     id: string,
-    dto: UpdateParticipantDto,
-  ): Promise<ParticipantsEntity> => {
+    dto: UpdatePropietarioDto,
+  ): Promise<PropietarioEntity> => {
     try {
-      const participant = await this.participantRepository.preload({ id, ...dto });
-      if (!participant) {
-        throw new NotFoundException(`Participante con ID "${id}" no encontrado.`);
+      const propietario = await this.propietarioRepository.preload({ id, ...dto });
+      if (!propietario) {
+        throw new NotFoundException(`Propietario con ID "${id}" no encontrado.`);
       }
-      return await this.participantRepository.save(participant);
+      return await this.propietarioRepository.save(propietario);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
   };
 
-  removeParticipant = async (id: string): Promise<void> => {
+  removePropietario = async (id: string): Promise<void> => {
     try {
-      const result = await this.participantRepository.delete(id);
+      const result = await this.propietarioRepository.delete(id);
       if (result.affected === 0) {
-        throw new NotFoundException(`Participante con ID "${id}" no encontrado.`);
+        throw new NotFoundException(`Propietario con ID "${id}" no encontrado.`);
       }
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  createSubstituto = async (dto: CreateSubstitutoDto): Promise<SubstitutoEntity> => {
+    try {
+      const newSubstituto = this.substitutoRepository.create(dto);
+      return await this.substitutoRepository.save(newSubstituto);
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  findAllSubstitutos = async (): Promise<SubstitutoEntity[]> => {
+    try {
+      return await this.substitutoRepository.find({
+        relations: ['canSubstituteFor'],
+      });
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  findOneSubstituto = async (id: string): Promise<SubstitutoEntity> => {
+    try {
+      const substituto = await this.substitutoRepository.findOne({
+        where: { id },
+        relations: ['canSubstituteFor', 'attendedAsSubstitute'],
+      });
+      if (!substituto) {
+        throw new NotFoundException(`Substituto con ID "${id}" no encontrado.`);
+      }
+      return substituto;
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  updateSubstituto = async (
+    id: string,
+    dto: UpdateSubstitutoDto,
+  ): Promise<SubstitutoEntity> => {
+    try {
+      const substituto = await this.substitutoRepository.preload({ id, ...dto });
+      if (!substituto) {
+        throw new NotFoundException(`Substituto con ID "${id}" no encontrado.`);
+      }
+      return await this.substitutoRepository.save(substituto);
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  removeSubstituto = async (id: string): Promise<void> => {
+    try {
+      const result = await this.substitutoRepository.delete(id);
+      if (result.affected === 0) {
+        throw new NotFoundException(`Substituto con ID "${id}" no encontrado.`);
+      }
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  assignSubstituto = async (
+    propietarioId: string,
+    substitutoId: string,
+  ): Promise<PropietarioEntity> => {
+    try {
+      const [propietario, substituto] = await Promise.all([
+        this.findOnePropietario(propietarioId),
+        this.findOneSubstituto(substitutoId),
+      ]);
+      const alreadyAssigned = propietario.approvedSubstitutes.some(
+        (sub) => sub.id === substituto.id,
+      );
+      if (alreadyAssigned) {
+        throw new ConflictException('Este substituto ya está asignado a este propietario.');
+      }
+      propietario.approvedSubstitutes.push(substituto);
+      return await this.propietarioRepository.save(propietario);
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  removeSubstitutoFromPropietario = async (
+    propietarioId: string,
+    substitutoId: string,
+  ): Promise<void> => {
+    try {
+      const propietario = await this.findOnePropietario(propietarioId);
+      const initialCount = propietario.approvedSubstitutes.length;
+      propietario.approvedSubstitutes = propietario.approvedSubstitutes.filter(
+        (sub) => sub.id !== substitutoId,
+      );
+      if (initialCount === propietario.approvedSubstitutes.length) {
+        throw new NotFoundException('El substituto no estaba asignado a este propietario.');
+      }
+      await this.propietarioRepository.save(propietario);
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
