@@ -2,6 +2,8 @@ import { MinutesEntity } from '../entities/minute.entity';
 import { MinutesType } from '../enums/minutes-status.enum';
 
 type AttendanceItem = {
+    secretary: string;
+    syndic: string;
     propietarioId: string;
     propietarioName: string;
     attended: boolean;
@@ -43,6 +45,8 @@ export class GetMinutesResponseDto {
 
         const attendanceListDto: AttendanceItem[] = minutes.attendanceList
             ? minutes.attendanceList.map((att) => ({
+                secretary: att.secretary,
+                syndic: att.syndic,
                 propietarioId: att.propietarioConvocado?.id,
                 propietarioName: att.propietarioConvocado?.name,
                 attended: att.asistioPropietario,
