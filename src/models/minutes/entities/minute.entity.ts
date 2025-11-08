@@ -31,7 +31,7 @@ export class MinutesEntity {
   @Column({ name: 'meeting_date', type: 'date', nullable: true })
   meetingDate: Date;
 
-  @Column({ name: 'meeting_time', type: 'time', nullable: true })
+  @Column({ name: 'meeting_time', nullable: true })
   meetingTime: string;
 
   @Column({ name: 'description_html', type: 'longtext', nullable: true })

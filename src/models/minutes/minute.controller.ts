@@ -68,7 +68,7 @@ export class MinuteController {
   }
 
   @Patch('update-name-number/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateNameAndNumber(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateMinutesNameNumberDto,
