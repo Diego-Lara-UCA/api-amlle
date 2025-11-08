@@ -18,6 +18,7 @@ export class GetMinutesResponseDto {
     meetingDate: Date;
     meetingTime: string;
     status: MinutesType;
+    bodyContent: string;
     createdAt: Date;
     volumeId: string;
     createdByName: string;
@@ -61,6 +62,7 @@ export class GetMinutesResponseDto {
             actNumber: minutes.actNumber,
             meetingDate: minutes.meetingDate,
             meetingTime: minutes.meetingTime,
+            bodyContent: minutes.bodyContent,
             status: minutes.status,
             createdAt: minutes.createdAt,
             volumeId: minutes.volume?.id,
