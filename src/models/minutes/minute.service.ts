@@ -136,6 +136,8 @@ export class MinutesService {
           const newAttendance = updateDto.attendanceList.map((item) =>
             attendanceRepo.create({
               minutes: minutes,
+              syndic: item.syndic,
+              secretary: item.secretary,
               propietarioConvocado: { id: item.propietarioConvocadoId },
               asistioPropietario: item.asistioPropietario,
               substitutoAsistente: item.substitutoAsistenteId

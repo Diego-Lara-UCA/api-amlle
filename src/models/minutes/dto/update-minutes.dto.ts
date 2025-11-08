@@ -28,10 +28,6 @@ export class UpdateMinutesDto {
 
   @IsString()
   @IsOptional()
-  agenda?: string;
-
-  @IsString()
-  @IsOptional()
   bodyContent?: string;
 
   @IsEnum(MinutesType)
