@@ -305,47 +305,47 @@ Endpoints para la administración de volúmenes (tomos).
 ### `POST /api/volume/create`
 
 * **Descripción:** Crea un nuevo volumen asociado a un libro.
-* **Rol Requerido:** `ADMIN`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** `CreateVolumeDto`
     ```json
-      {
-        "number": "number (entero positivo)",
-        "bookId": "string (UUID)",
-        "name": "string (opcional)",
-        "pdfSettings": {
-          "pageSize": "string",
-          "orientation": "portrait | landscape",
-          "margins": {
-            "top": "number",
-            "bottom": "number",
-            "left": "number",
-            "right": "number"
-          },
-          "lineHeight": "number",
-          "fontSize": "number",
-          "enablePageNumbering": "boolean",
-          "pageNumberingOffset": "number",
-          "pageNumberingPosition": "center | left | right",
-          "pageNumberingFormat": "string"
+    {
+      "number": "number (entero positivo)",
+      "bookId": "string (UUID)",
+      "name": "string (opcional)",
+      "pdfSettings": {
+        "pageSize": "string",
+        "orientation": "portrait | landscape",
+        "margins": {
+          "top": "number",
+          "bottom": "number",
+          "left": "number",
+          "right": "number"
         },
-        "status": "VolumeState (enum, opcional)"
-      }
+        "lineHeight": "number",
+        "fontSize": "number",
+        "enablePageNumbering": "boolean",
+        "pageNumberingOffset": "number",
+        "pageNumberingPosition": "center | left | right",
+        "pageNumberingFormat": "string"
+      },
+      "status": "VolumeState (enum, opcional)"
+    }
     ```
 
 ---
 
 ### `GET /api/volume/find-all`
 
-* **Descripción:** Obtiene todos los volúmenes.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Descripción:** Obtiene todos los volúmenes (DTO optimizado).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
 
 ### `GET /api/volume/find-all-by-book/:bookId`
 
-* **Descripción:** Obtiene todos los volúmenes de un libro específico.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Descripción:** Obtiene todos los volúmenes de un libro específico (DTO optimizado).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
@@ -353,41 +353,41 @@ Endpoints para la administración de volúmenes (tomos).
 ### `GET /api/volume/find/:id`
 
 * **Descripción:** Obtiene un volumen específico por su ID.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
 
 ### `PATCH /api/volume/update/:id`
 
-* **Descripción:** Actualiza la información de un volumen (ej. número).
-* **Rol Requerido:** `ADMIN`
+* **Descripción:** Actualiza la información de un volumen.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** `UpdateVolumeDto`
     ```json
-      {
-        "name": "string (opcional)",
-        "pdfSettings": {
-          "pageSize": "string",
-          "orientation": "portrait | landscape",
-          "margins": {
-            "top": "number",
-            "bottom": "number",
-            "left": "number",
-            "right": "number"
-          },
-          "lineHeight": "number",
-          "fontSize": "number",
-          "enablePageNumbering": "boolean",
-          "pageNumberingOffset": "number",
-          "pageNumberingPosition": "center | left | right",
-          "pageNumberingFormat": "string"
+    {
+      "name": "string (opcional)",
+      "pdfSettings": {
+        "pageSize": "string",
+        "orientation": "portrait | landscape",
+        "margins": {
+          "top": "number",
+          "bottom": "number",
+          "left": "number",
+          "right": "number"
         },
-        "number": "number (entero positivo, opcional)",
-        "pageCount": "number (entero, opcional)",
-        "status": "VolumeState (enum, opcional)",
-        "authorizationDate": "string (ISO 8601 Date, opcional)",
-        "closingDate": "string (ISO 8601 Date, opcional)"
-      }
+        "lineHeight": "number",
+        "fontSize": "number",
+        "enablePageNumbering": "boolean",
+        "pageNumberingOffset": "number",
+        "pageNumberingPosition": "center | left | right",
+        "pageNumberingFormat": "string"
+      },
+      "number": "number (entero positivo, opcional)",
+      "pageCount": "number (entero, opcional)",
+      "status": "VolumeState (enum, opcional)",
+      "authorizationDate": "string (ISO 8601 Date, opcional)",
+      "closingDate": "string (ISO 8601 Date, opcional)"
+    }
     ```
 
 ---
@@ -395,7 +395,7 @@ Endpoints para la administración de volúmenes (tomos).
 ### `PATCH /api/volume/update-status/:id`
 
 * **Descripción:** Actualiza el estado de un volumen.
-* **Rol Requerido:** `ADMIN`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** `UpdateVolumeStatusDto`
     ```json
     {
@@ -408,32 +408,32 @@ Endpoints para la administración de volúmenes (tomos).
 ### `DELETE /api/volume/delete/:id`
 
 * **Descripción:** Elimina un volumen de forma permanente.
-* **Rol Requerido:** `SUPERADMIN`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
 
 ## 📜 Actas y Participantes (`/api/`)
 
-Endpoints para la administración de actas y la lista maestra de participantes.
+Endpoints para la administración de actas y la gestión de participantes (Propietarios y Substitutos).
+
+### Endpoints de Actas (Minutes)
 
 ---
 
 ### `POST /api/minutes/create`
 
-* **Descripción:** Crea una nueva acta, asociándola a un volumen y participantes.
-* **Rol Requerido:** `ADMIN`
+* **Descripción:** Crea una nueva acta, asociándola a un volumen.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** `CreateMinutesDto`
     ```json
     {
       "volumeId": "string (UUID)",
-      "number": "string",
-      "meetingDate": "string (ISO 8601 Date)",
+      "actNumber": "number",
+      "name": "string (opcional)",
+      "meetingDate": "string (ISO 8601 Date, opcional)",
       "meetingTime": "string (opcional)",
-      "agenda": "string (opcional)",
-      "bodyContent": "string (opcional)",
-      "status": "MinutesType (enum, opcional)",
-      "participantIds": "string[] (array de UUIDs, opcional)"
+      "type": "MinutesType (enum, opcional)"
     }
     ```
 
@@ -441,8 +441,8 @@ Endpoints para la administración de actas y la lista maestra de participantes.
 
 ### `GET /api/minutes/find-all-by-volume/:volumeId`
 
-* **Descripción:** Obtiene todas las actas de un volumen específico.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Descripción:** Obtiene todas las actas de un volumen específico (DTO optimizado).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
@@ -450,36 +450,31 @@ Endpoints para la administración de actas y la lista maestra de participantes.
 ### `GET /api/minutes/find/:id`
 
 * **Descripción:** Obtiene un acta específica por su ID.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
 
 ### `PATCH /api/minutes/update/:id`
 
-* **Descripción:** Actualiza la información de un acta (ej. contenido).
-* **Rol Requerido:** `ADMIN`
+* **Descripción:** Actualiza la información de un acta y/o su lista de asistencia.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** `UpdateMinutesDto`
     ```json
     {
-      "number": "string (opcional)",
+      "actNumber": "number (opcional)",
       "meetingDate": "string (ISO 8601 Date, opcional)",
       "meetingTime": "string (opcional)",
       "agenda": "string (opcional)",
-      "bodyContent": "string (opcional)"
-    }
-    ```
-
----
-
-### `PATCH /api/minutes/update-status/:id/status`
-
-* **Descripción:** Actualiza el estado de un acta (ej. 'BORRADOR', 'APROBADA').
-* **Rol Requerido:** `ADMIN`
-* **Body (DTO):** `UpdateMinutesStatusDto`
-    ```json
-    {
-      "status": "MinutesType (enum)"
+      "bodyContent": "string (opcional)",
+      "status": "MinutesType (enum, opcional)",
+      "attendanceList": [
+        {
+          "propietarioConvocadoId": "string (UUID)",
+          "asistioPropietario": "boolean",
+          "substitutoAsistenteId": "string (UUID, opcional)"
+        }
+      ]
     }
     ```
 
@@ -488,59 +483,148 @@ Endpoints para la administración de actas y la lista maestra de participantes.
 ### `DELETE /api/minutes/delete/:id`
 
 * **Descripción:** Elimina un acta de forma permanente.
-* **Rol Requerido:** `SUPERADMIN`
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
 
-### `POST /api/participants/crate`
+### `PATCH /api/update-name-number/:id`
 
-* **Descripción:** Crea un nuevo participante en la lista maestra.
-* **Rol Requerido:** `SUPERADMIN`
-* **Body (DTO):** `CreateParticipantDto`
+* **Descripción:** Actualiza el nombre y número de un acta. Si ya existe un acta con esos datos, los intercambia.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateMinutesNameNumberDto`
     ```json
     {
       "name": "string",
-      "isSubstitute": "boolean (opcional)"
+      "actNumber": "number"
     }
     ```
 
 ---
 
-### `GET /api/participants/find-all`
+### Endpoints de Participantes
 
-* **Descripción:** Obtiene la lista maestra completa de participantes.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
-* **Body (DTO):** N/A
+Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplentes).
 
 ---
 
-### `GET /api/participants/find/:id`
+### `POST /api/participants/propietarios`
 
-* **Descripción:** Obtiene un participante específico por su ID.
-* **Rol Requerido:** `Usuario Autenticado (JWT)`
-* **Body (DTO):** N/A
-
----
-
-### `PATCH /api/participants/update/:id`
-
-* **Descripción:** Actualiza la información de un participante de la lista maestra.
-* **Rol Requerido:** `SUPERADMIN`
-* **Body (DTO):** `UpdateParticipantDto`
+* **Descripción:** Crea un nuevo participante "Propietario" en la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `CreatePropietarioDto`
     ```json
     {
-      "name": "string (opcional)",
-      "isSubstitute": "boolean (opcional)"
+      "name": "string"
     }
     ```
 
 ---
 
-### `DELETE /api/participants/delete/:id`
+### `GET /api/participants/propietarios`
 
-* **Descripción:** Elimina un participante de la lista maestra.
-* **Rol Requerido:** `SUPERADMIN`
+* **Descripción:** Obtiene la lista maestra de todos los Propietarios.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/participants/propietarios/:id`
+
+* **Descripción:** Obtiene un Propietario específico por su ID.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/participants/propietarios/:id`
+
+* **Descripción:** Actualiza el nombre de un Propietario.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `UpdatePropietarioDto`
+    ```json
+    {
+      "name": "string (opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/participants/propietarios/:id`
+
+* **Descripción:** Elimina un Propietario de la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `POST /api/participants/substitutos`
+
+* **Descripción:** Crea un nuevo participante "Substituto" en la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `CreateSubstitutoDto`
+    ```json
+    {
+      "name": "string"
+    }
+    ```
+
+---
+
+### `GET /api/participants/substitutos`
+
+* **Descripción:** Obtiene la lista maestra de todos los Substitutos.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /api/participants/substitutos/:id`
+
+* **Descripción:** Obtiene un Substituto específico por su ID.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/participants/substitutos/:id`
+
+* **Descripción:** Actualiza el nombre de un Substituto.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `UpdateSubstitutoDto`
+    ```json
+    {
+      "name": "string (opcional)"
+    }
+    ```
+
+---
+
+### `DELETE /api/participants/substitutos/:id`
+
+* **Descripción:** Elimina un Substituto de la lista maestra.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `POST /api/participants/propietarios/:id/assign-substituto`
+
+* **Descripción:** Asigna un Substituto (habilitado) a un Propietario.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `AssignSubstitutoDto`
+    ```json
+    {
+      "substitutoId": "string (UUID)"
+    }
+    ```
+
+---
+
+### `DELETE /api/participants/propietarios/:id/remove-substituto/:substitutoId`
+
+* **Descripción:** Desvincula un Substituto de un Propietario.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
 ---
