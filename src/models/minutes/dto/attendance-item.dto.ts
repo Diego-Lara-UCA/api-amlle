@@ -5,6 +5,12 @@ export class AttendanceItemDto {
   @IsNotEmpty()
   propietarioConvocadoId: string;
 
+  @IsNotEmpty()
+  syndic: string;
+  
+  @IsNotEmpty()
+  secretary: string;  
+
   @IsBoolean()
   @IsNotEmpty()
   asistioPropietario: boolean;

@@ -470,6 +470,8 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
       "status": "MinutesType (enum, opcional)",
       "attendanceList": [
         {
+          "syndic": "string",
+          "secretary": "string",
           "propietarioConvocadoId": "string (UUID)",
           "asistioPropietario": "boolean",
           "substitutoAsistenteId": "string (UUID, opcional)"

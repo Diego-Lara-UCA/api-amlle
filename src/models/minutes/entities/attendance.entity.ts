@@ -14,6 +14,12 @@ export class AttendanceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 100 })
+  syndic: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  secretary: string;
+
   @ManyToOne(() => MinutesEntity, (minutes) => minutes.attendanceList, {
     nullable: false,
     onDelete: 'CASCADE',
