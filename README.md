@@ -646,7 +646,8 @@ Endpoints para la administración de acuerdos.
     {
       "minutesId": "string (UUID)",
       "content": "string (opcional)",
-      "name": "string"
+      "name": "string",
+      "agreementNumber": "number"
     }
     ```
 
@@ -686,3 +687,19 @@ Endpoints para la administración de acuerdos.
 * **Descripción:** Elimina un acuerdo de forma permanente.
 * **Rol Requerido:** `ADMIN`
 * **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/agreements/update-name-number/:id`
+
+* **Descripción:** Actualiza el nombre y numero de un acuerdo.
+* **Rol Requerido:** `ADMIN`
+* **Body (DTO):** `UpdateAgreementNameNumberDto`
+    ```json
+    {
+      "name": "string (opcional)",
+      "agreementNumber": "number",
+    }
+    ```
+
+---

@@ -16,6 +16,7 @@ import { UpdateAgreementDto } from './dto/update-agreement.dto';
 import { Roles } from 'src/common/utils/decorators/roles.decorator';
 import { Role } from 'src/models/user/enums/role.enum';
 import { User } from 'src/common/utils/decorators/user.decorator';
+import { UpdateAgreementNameNumberDto } from './dto/update-agreement-name-number.dto';
 
 @Controller('agreements')
 export class AgreementController {
@@ -57,5 +58,15 @@ export class AgreementController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.agreementsService.remove(id);
+  }
+
+  @Patch('update-name-number/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  updateNameAndNumber(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateAgreementNameNumberDto,
+    @User('userId') userId: string,
+  ) {
+    return this.agreementsService.updateNameAndNumber(id, dto, userId);
   }
 }

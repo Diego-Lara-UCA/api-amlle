@@ -11,6 +11,9 @@ export class AgreementEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   name: string;
 
+  @Column({ type: 'int' })
+  agreementNumber: number;
+
   @Column({ name: 'description_html', type: 'longtext', nullable: true })
   content: string;
   

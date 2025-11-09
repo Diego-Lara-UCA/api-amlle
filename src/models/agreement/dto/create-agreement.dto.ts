@@ -6,7 +6,11 @@ export class CreateAgreementDto {
   minutesId: string;
 
   @IsString()
+  @IsNotEmpty()
   name: string;
+
+  @IsNotEmpty()
+  agreementNumber: number;
 
   @IsString()
   @IsOptional()
