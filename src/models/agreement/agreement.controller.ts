@@ -18,7 +18,7 @@ import { Role } from 'src/models/user/enums/role.enum';
 import { User } from 'src/common/utils/decorators/user.decorator';
 import { UpdateAgreementNameNumberDto } from './dto/update-agreement-name-number.dto';
 
-@Controller('agreements')
+@Controller('api/agreements')
 export class AgreementController {
   constructor(private readonly agreementsService: AgreementService) {}
 
