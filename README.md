@@ -645,7 +645,8 @@ Endpoints para la administración de acuerdos.
     ```json
     {
       "minutesId": "string (UUID)",
-      "content": "string (opcional)"
+      "content": "string (opcional)",
+      "name": "string"
     }
     ```
 
