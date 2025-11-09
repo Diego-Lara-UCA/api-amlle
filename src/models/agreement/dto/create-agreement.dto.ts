@@ -6,6 +6,9 @@ export class CreateAgreementDto {
   minutesId: string;
 
   @IsString()
+  name: string;
+
+  @IsString()
   @IsOptional()
   content?: string;
 }

@@ -32,7 +32,7 @@ export class AgreementService {
     userId: string,
   ): Promise<AgreementEntity> => {
     try {
-      const { minutesId, content } = createDto;
+      const { minutesId, content, name } = createDto;
       const [user, minutes] = await Promise.all([
         this.userService.findOneById(userId),
         this.minutesService.findOneMinutes(minutesId),
@@ -42,6 +42,7 @@ export class AgreementService {
         content,
         minutes: minutes,
         createdBy: user,
+        name: name
       });
 
       return await this.agreementRepository.save(newAgreement);

@@ -8,6 +8,9 @@ export class AgreementEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name: string;
+
   @Column({ name: 'description_html', type: 'longtext', nullable: true })
   content: string;
   
