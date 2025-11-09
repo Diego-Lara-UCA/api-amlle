@@ -133,7 +133,7 @@ export class AgreementService {
         const modificationRepo = manager.getRepository(AgreementModification);
 
         const [modifier, targetAgreement] = await Promise.all([
-          this.userService.findOneById(userId), //
+          this.userService.findOneById(userId),
           agreementRepo.findOne({ where: { id }, relations: ['minutes'] }),
         ]);
 
@@ -155,16 +155,11 @@ export class AgreementService {
           },
         });
 
-        // Asignar los nuevos valores al acuerdo objetivo
         targetAgreement.name = dto.name;
         targetAgreement.agreementNumber = dto.agreementNumber;
 
         const modificationsToSave: AgreementModification[] = [];
-
-        // --- 👇 CORRECCIÓN DE LÓGICA AQUÍ 👇 ---
-        // Solo hacer el swap si el acuerdo existe Y NO es el mismo que estamos actualizando
         if (existingAgreement && existingAgreement.id !== targetAgreement.id) {
-          this.logger.log(`Iniciando SWAP: Acuerdo ID ${targetAgreement.id} intercambia con Acuerdo ID ${existingAgreement.id}`);
 
           existingAgreement.name = originalName;
           existingAgreement.agreementNumber = originalAgreementNumber;
@@ -177,24 +172,21 @@ export class AgreementService {
           );
 
         } else {
-          // Si 'existingAgreement' es el mismo 'targetAgreement', o si no existe,
-          // simplemente guardamos el 'targetAgreement' actualizado.
           await agreementRepo.save(targetAgreement);
 
           modificationsToSave.push(
             modificationRepo.create({ agreement: targetAgreement, modifier: modifier })
           );
         }
-        // --- 👆 FIN DE LA CORRECCIÓN 👆 ---
 
         await modificationRepo.save(modificationsToSave);
         return targetAgreement;
       });
 
-      return this.findOne(updatedTargetAgreement.id); //
+      return this.findOne(updatedTargetAgreement.id); 
 
     } catch (error) {
-      throw handleDatabaseError(error, this.logger); //
+      throw handleDatabaseError(error, this.logger);
     }
   };
 }
