@@ -21,6 +21,7 @@ export class GetMinutesResponseDto {
     bodyContent: string;
     createdAt: Date;
     volumeId: string;
+    volumeName: string;
     createdByName: string;
     latestModifierName: string | null;
     latestModificationDate: Date | null;
@@ -66,6 +67,7 @@ export class GetMinutesResponseDto {
             status: minutes.status,
             createdAt: minutes.createdAt,
             volumeId: minutes.volume?.id,
+            volumeName: minutes.volume?.name,
             createdByName: minutes.createdBy?.nombre || 'Usuario desconocido',
             latestModifierName: latestModName,
             latestModificationDate: latestModDate,

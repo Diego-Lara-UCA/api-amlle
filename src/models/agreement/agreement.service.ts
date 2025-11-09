@@ -14,6 +14,7 @@ import { UserEntity } from 'src/models/user/entities/user.entity';
 import { MinutesService } from '../minutes/minute.service';
 import { AgreementModification } from './entities/agreement-modification.entity';
 import { UpdateAgreementNameNumberDto } from './dto/update-agreement-name-number.dto';
+import { GetAgreementResponseDto } from './dto/get-agreement-response.dto';
 
 @Injectable()
 export class AgreementService {
@@ -54,13 +55,22 @@ export class AgreementService {
     }
   };
 
-  findAllByMinutes = async (minutesId: string): Promise<AgreementEntity[]> => {
+findAllByMinutes = async (minutesId: string): Promise<GetAgreementResponseDto[]> => {
     try {
-      return await this.agreementRepository.find({
+      const agreements = await this.agreementRepository.find({
         where: { minutes: { id: minutesId } },
-        relations: ['createdBy', 'modifications'],
-        order: { createdAt: 'ASC' },
+        relations: [
+          'createdBy',
+          'modifications',
+          'modifications.modifier',
+          'minutes',
+          'minutes.volume',
+          'minutes.volume.book',
+        ],
+        order: { agreementNumber: 'ASC' },
       });
+
+      return agreements.map(agreement => GetAgreementResponseDto.fromEntity(agreement));
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }

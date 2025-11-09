@@ -99,3 +99,5 @@ export class UserController {
     return this.userService.changeRole(id, changeRoleDto);
   }
 }
+
+//@TODO: tiempo de sesión
