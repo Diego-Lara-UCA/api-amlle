@@ -64,6 +64,31 @@ export class MinutesService {
     }
   };
 
+  findAllMinutes = async (): Promise<GetMinutesResponseDto[]> => {
+    try {
+      const minutesList = await this.minutesRepository.find({
+        relations: [
+          'volume',
+          'createdBy',
+          'agreements',
+          'modifications',
+          'modifications.modifier',
+          'attendanceList',
+          'attendanceList.propietarioConvocado',
+          'attendanceList.substitutoAsistente',
+        ],
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      return minutesList.map(minutes => GetMinutesResponseDto.fromEntity(minutes));
+
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
   findAllMinutesByVolume = async (volumeId: string): Promise<GetMinutesResponseDto[]> => {
     try {
       const minutesList = await this.minutesRepository.find({

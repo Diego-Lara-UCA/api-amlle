@@ -166,4 +166,10 @@ export class MinuteController {
       substitutoId,
     );
   }
+
+  @Get('minutes/find-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findAllMinutes() {
+    return this.minutesService.findAllMinutes();
+  }
 }

@@ -1,3 +1,4 @@
+import { SearchModule } from './models/search/search.module';
 import { MinutesService } from './models/minutes/minute.service';
 import { AgreementModule } from './models/agreement/agreement.module';
 import { MinutesModule } from './models/minutes/minute.module';
@@ -15,6 +16,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 
 @Module({
   imports: [
+    SearchModule,
     AgreementModule,
     MinutesModule,
     VolumeModule,
@@ -35,5 +37,3 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     }],
 })
 export class AppModule { }
-
-//@TODO: busqueda

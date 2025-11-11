@@ -69,4 +69,10 @@ export class AgreementController {
   ) {
     return this.agreementsService.updateNameAndNumber(id, dto, userId);
   }
+
+  @Get('get-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findAll() {
+    return this.agreementsService.findAll();
+  }
 }

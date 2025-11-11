@@ -478,7 +478,28 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
         }
       ]
     }
+    ```  
+---
+
+### `PATCH /api/agreements/update-name-number/:id`
+
+* **Descripción:** Actualiza el nombre (`name`) y el número (`agreementNumber`) de un acuerdo. Si ya existe un acuerdo con esos datos en la misma acta, los intercambia (swap).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `UpdateAgreementNameNumberDto`
+    ```json
+    {
+      "name": "string",
+      "agreementNumber": "number"
+    }
     ```
+
+---
+
+### `GET /api/minutes/find-all`
+
+* **Descripción:** Obtiene una lista de todas las actas (minutes) del sistema, formateadas con el DTO de respuesta optimizado.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
 
 ---
 
@@ -693,7 +714,7 @@ Endpoints para la administración de acuerdos.
 ### `PATCH /api/agreements/update-name-number/:id`
 
 * **Descripción:** Actualiza el nombre y numero de un acuerdo.
-* **Rol Requerido:** `ADMIN`
+* **Rol Requerido:** `ADMIN` 
 * **Body (DTO):** `UpdateAgreementNameNumberDto`
     ```json
     {
@@ -701,5 +722,34 @@ Endpoints para la administración de acuerdos.
       "agreementNumber": "number",
     }
     ```
+
+---
+
+---
+
+## 🔍 Búsqueda (`/api/search`)
+
+Endpoints para la búsqueda unificada a través de todas las entidades.
+
+---
+
+### `GET /api/search`
+
+* **Descripción:** Realiza una búsqueda unificada en Libros, Volúmenes, Actas, Acuerdos y Participantes. Los filtros se aplican como parámetros de consulta (query params).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Query Params (DTO):** `SearchQueryDto`
+    * **Ejemplo de URL:** `/api/search?keyword=Revisión&entityType=minutes&minutesStatus=BORRADOR`
+    ```json
+    {
+      "keyword": "string (opcional)",
+      "entityType": "string (opcional: 'books', 'volumes', 'minutes', 'agreements', 'propietarios', 'substitutos')",
+      "bookStatus": "BookState (enum, opcional)",
+      "volumeStatus": "VolumeState (enum, opcional)",
+      "minutesStatus": "MinutesType (enum, opcional)",
+      "dateFrom": "string (ISO 8601 Date, opcional)",
+      "dateTo": "string (ISO 8601 Date, opcional)"
+    }
+    ```
+* **Body (DTO):** N/A
 
 ---

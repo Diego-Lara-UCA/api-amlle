@@ -55,7 +55,32 @@ export class AgreementService {
     }
   };
 
-findAllByMinutes = async (minutesId: string): Promise<GetAgreementResponseDto[]> => {
+  findAll = async (): Promise<GetAgreementResponseDto[]> => {
+    try {
+      const agreements = await this.agreementRepository.find({
+        // Carga todas las relaciones que GetAgreementResponseDto necesita
+        relations: [
+          'createdBy',
+          'modifications',
+          'modifications.modifier',
+          'minutes',
+          'minutes.volume',
+          'minutes.volume.book',
+        ],
+        order: {
+          createdAt: 'DESC', // Ordena por fecha de creación
+        },
+      });
+
+      // Mapea el resultado al DTO
+      return agreements.map(agreement => GetAgreementResponseDto.fromEntity(agreement));
+
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  findAllByMinutes = async (minutesId: string): Promise<GetAgreementResponseDto[]> => {
     try {
       const agreements = await this.agreementRepository.find({
         where: { minutes: { id: minutesId } },
@@ -193,7 +218,7 @@ findAllByMinutes = async (minutesId: string): Promise<GetAgreementResponseDto[]>
         return targetAgreement;
       });
 
-      return this.findOne(updatedTargetAgreement.id); 
+      return this.findOne(updatedTargetAgreement.id);
 
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
