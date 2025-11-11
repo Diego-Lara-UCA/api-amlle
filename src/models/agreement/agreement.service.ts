@@ -58,7 +58,6 @@ export class AgreementService {
   findAll = async (): Promise<GetAgreementResponseDto[]> => {
     try {
       const agreements = await this.agreementRepository.find({
-        // Carga todas las relaciones que GetAgreementResponseDto necesita
         relations: [
           'createdBy',
           'modifications',
@@ -68,13 +67,11 @@ export class AgreementService {
           'minutes.volume.book',
         ],
         order: {
-          createdAt: 'DESC', // Ordena por fecha de creación
+          createdAt: 'DESC',
         },
       });
 
-      // Mapea el resultado al DTO
       return agreements.map(agreement => GetAgreementResponseDto.fromEntity(agreement));
-
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }

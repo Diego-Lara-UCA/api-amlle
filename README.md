@@ -725,6 +725,12 @@ Endpoints para la administración de acuerdos.
 
 ---
 
+### `GET /agreements/get-all`
+
+* **Descripción:** Obtiene una lista de todos los acuerdos (agreements) del sistema, formateados con el DTO de respuesta optimizado.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
 ---
 
 ## 🔍 Búsqueda (`/api/search`)

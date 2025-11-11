@@ -69,6 +69,7 @@ export class MinutesService {
       const minutesList = await this.minutesRepository.find({
         relations: [
           'volume',
+          'volume.book',
           'createdBy',
           'agreements',
           'modifications',
