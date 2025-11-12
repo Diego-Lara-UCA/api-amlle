@@ -17,11 +17,15 @@ export class AgreementEntity {
   @Column({ name: 'description_html', type: 'longtext', nullable: true })
   content: string;
   
-  @ManyToOne(() => MinutesEntity, (minutes) => minutes.agreements)
+  @ManyToOne(() => MinutesEntity, (minutes) => minutes.agreements, {
+    nullable: false,
+    onDelete: 'CASCADE'
+  })
   minutes: MinutesEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.createdAgreements, {
     nullable: false,
+    onDelete: 'CASCADE'
   })
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;

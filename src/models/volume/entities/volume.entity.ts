@@ -41,7 +41,10 @@ export class VolumeEntity {
   })
   status: VolumeState;
 
-  @ManyToOne(() => BookEntity, (book) => book.volumes, { nullable: false, onDelete: "CASCADE" })
+  @ManyToOne(() => BookEntity, (book) => book.volumes, { 
+    nullable: false, 
+    onDelete: "CASCADE" 
+  })
   @JoinColumn({ name: 'book_id' })
   book: BookEntity;
 
@@ -64,6 +67,7 @@ export class VolumeEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.createdVolumes, {
     nullable: false,
+    onDelete: "CASCADE"
   })
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;

@@ -44,7 +44,10 @@ export class MinutesEntity {
   })
   status: MinutesType;
 
-  @ManyToOne(() => VolumeEntity, (volume) => volume.minutes, { nullable: false, onDelete: "CASCADE" })
+  @ManyToOne(() => VolumeEntity, (volume) => volume.minutes, { 
+    nullable: false, 
+    onDelete: "CASCADE" 
+  })
   @JoinColumn({ name: 'volume_id' })
   volume: VolumeEntity;
 
