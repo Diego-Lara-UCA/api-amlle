@@ -1,16 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { UserService } from 'src/models/user/user.service';
 
 import { LoginDto } from './dto/login.dto';
 import Argon2idUtils from 'src/common/utils/argon2id.util';
 import { use } from 'passport';
+import { SessionType } from '../user/enums/session-type.enum';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
@@ -24,10 +27,14 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // JWT payload
     const payload = { sub: user.id, active: user.activo};
-    const accessToken = this.jwtService.sign(payload);
-
+    const signOptions: JwtSignOptions = {};
+    if (user.sessionType === SessionType.TEMPORAL) {
+      signOptions.expiresIn = user.sessionDuration || this.configService.get<string>('JWT_EXPIRATION');
+    } else {
+      signOptions.expiresIn = undefined; 
+    }
+    const accessToken = this.jwtService.sign(payload, signOptions);
     return { accessToken };
   }
 }

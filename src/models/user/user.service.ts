@@ -16,6 +16,8 @@ import { SetPasswordDto } from './dto/set-password.dto';
 import { ChangeRoleDto } from './dto/change-role.dto';
 import Argon2idUtils from 'src/common/utils/argon2id.util';
 import { use } from 'passport';
+import { UpdateSessionSpecsDto } from './dto/update-session-specs.dto';
+import { SessionType } from './enums/session-type.enum';
 
 @Injectable()
 export class UserService {
@@ -117,6 +119,31 @@ export class UserService {
     const { rol } = changeRoleDto;
 
     user.rol = rol;
+    return this.userRepository.save(user);
+  }
+
+  async deactivate(id: string): Promise<UserEntity> {
+    const user = await this.findOneById(id);
+    if (!user.activo) {
+      throw new ConflictException(`El usuario con ID ${id} ya está inactivo.`);
+    }
+
+    user.activo = false;
+    return this.userRepository.save(user);
+  }
+
+  async updateSessionSpecs(
+    id: string,
+    dto: UpdateSessionSpecsDto,
+  ): Promise<UserEntity> {
+    const user = await this.findOneById(id);
+
+    user.sessionType = dto.sessionType;
+    
+    if (dto.sessionType === SessionType.TEMPORAL) {
+      user.sessionDuration = dto.sessionDuration;
+    }
+
     return this.userRepository.save(user);
   }
 }

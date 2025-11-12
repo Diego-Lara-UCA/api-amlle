@@ -21,6 +21,7 @@ import { Roles } from 'src/common/utils/decorators/roles.decorator';
 import { Role } from './enums/role.enum';
 import CryptoUtil from 'src/common/utils/crypto.util';
 import { Public } from 'src/common/utils/decorators/public.decorator';
+import { UpdateSessionSpecsDto } from './dto/update-session-specs.dto';
 
 @Controller('api/users')
 export class UserController {
@@ -28,7 +29,6 @@ export class UserController {
 
   @Post("create")
   @Roles(Role.ADMIN, Role.SUPERADMIN)
-  //@Public()
   async Create(@Body() createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.userService.create(createUserDto);
     return {
@@ -91,13 +91,27 @@ export class UserController {
 
   @Patch('change-role/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
-  //@Public()
   ChangeRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changeRoleDto: ChangeRoleDto,
   ): Promise<UserEntity> {
     return this.userService.changeRole(id, changeRoleDto);
   }
-}
+  
+  @Patch('deactivate/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  async deactivate(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UserEntity> {
+    return this.userService.deactivate(id);
+  }
 
-//@TODO: tiempo de sesión
+  @Patch('update-session-specs/:id')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  UpdateSessionSpecs(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateSessionSpecsDto,
+  ): Promise<UserEntity> {
+    return this.userService.updateSessionSpecs(id, dto);
+  }
+}

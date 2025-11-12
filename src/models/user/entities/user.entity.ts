@@ -18,6 +18,7 @@ import { BookModification } from 'src/models/book/entities/book-modification.ent
 import { VolumeModification } from 'src/models/volume/entities/volume-modification.entity';
 import { MinutesModification } from 'src/models/minutes/entities/minutes-modification.entity';
 import { AgreementModification } from 'src/models/agreement/entities/agreement-modification.entity';
+import { SessionType } from '../enums/session-type.enum';
 
 @Entity('usuarios')
 export class UserEntity {
@@ -63,6 +64,22 @@ export class UserEntity {
 
   @Column({ type: 'boolean', default: false })
   activo: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: SessionType,
+    default: SessionType.TEMPORAL,
+  })
+  sessionType: SessionType;
+
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+    default: null,
+    name: 'session_duration',
+  })
+  sessionDuration: string; // (ej. '1d', '4h', '30m')
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -136,12 +136,28 @@ Endpoints para la administración de usuarios.
 
 ### `POST /api/users/create`
 
-* **Descripción:** Crea un nuevo usuario y le asigna una contraseña temporal.
-* **Rol Requerido:** `SUPERADMIN`
+* **Descripción:** Crea un nuevo usuario. La contraseña se asigna por separado.
+* **Rol Requerido:** `ADMIN`, `SUPERADMIN`
 * **Body (DTO):** `CreateUserDto`
     ```json
     {
-      "nombre": "string (max 255)"
+      "nombre": "string (max 255)",
+      "sessionType": "SessionType (enum: 'indefinida' | 'temporal', opcional)",
+      "sessionDuration": "string (opcional, ej: '1d', '8h', '30m')"
+    }
+    ```
+
+---
+
+### `PATCH /api/users/update-session-specs/:id`
+
+* **Descripción:** Actualiza la configuración de expiración de sesión de un usuario.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`
+* **Body (DTO):** `UpdateSessionSpecsDto`
+    ```json
+    {
+      "sessionType": "SessionType (enum: 'indefinida' | 'temporal')",
+      "sessionDuration": "string (requerido si sessionType es 'temporal')"
     }
     ```
 
@@ -220,6 +236,14 @@ Endpoints para la administración de usuarios.
       "rol": "Role (enum)"
     }
     ```
+
+---
+
+### `PATCH /api/users/deactivate/:id`
+
+* **Descripción:** Desactiva un usuario (establece `activo` en `false`).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`
+* **Body (DTO):** N/A
 
 ---
 
