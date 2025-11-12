@@ -24,7 +24,7 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<UserEntity> {
     const existingUser = await this.userRepository.findOneBy({
@@ -106,7 +106,7 @@ export class UserService {
     await this.userRepository.save(user);
   }
 
-    async ChangePassword(id: string, setPasswordDto: SetPasswordDto): Promise<void> {
+  async ChangePassword(id: string, setPasswordDto: SetPasswordDto): Promise<void> {
     const user = await this.findOneById(id);
 
     if (!user) {
@@ -143,7 +143,7 @@ export class UserService {
     const user = await this.findOneById(id);
 
     user.sessionType = dto.sessionType;
-    
+
     if (dto.sessionType === SessionType.TEMPORAL) {
       user.sessionDuration = dto.sessionDuration;
     }
