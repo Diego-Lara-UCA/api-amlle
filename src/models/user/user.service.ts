@@ -34,6 +34,10 @@ export class UserService {
       throw new ConflictException('El nombre de usuario ya está en uso');
     }
 
+    if (createUserDto.sessionType === SessionType.TEMPORAL && !createUserDto.sessionDuration) {
+      throw new ConflictException('El tipo de sesión temporal debe tener una duración definida');
+    }
+
     const newUser = this.userRepository.create(createUserDto);
     return this.userRepository.save(newUser);
   }

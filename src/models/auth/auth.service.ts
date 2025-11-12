@@ -14,27 +14,27 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.userService.findUserByNombreForAuth(loginDto.name);
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
-    
+
     const isPasswordValid = await Argon2idUtils.Compare(loginDto.password, user.contrasena);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const payload = { sub: user.id, active: user.activo};
+    const payload = { sub: user.id, active: user.activo };
     const signOptions: JwtSignOptions = {};
     if (user.sessionType === SessionType.TEMPORAL) {
-      signOptions.expiresIn = user.sessionDuration || this.configService.get<string>('JWT_EXPIRATION');
-    } else {
-      signOptions.expiresIn = undefined; 
+      signOptions.expiresIn = (user.sessionDuration || undefined) ??
+        this.configService.get<string>('JWT_EXPIRATION', '1d');
     }
     const accessToken = this.jwtService.sign(payload, signOptions);
+
     return { accessToken };
   }
 }
