@@ -11,6 +11,12 @@ type AttendanceItem = {
     substituteName: string | null;
 };
 
+type AgreementItem = {
+    id: string;
+    name: string;
+    agreementNumber: number;
+};
+
 export class GetMinutesResponseDto {
     id: string;
     name: string;
@@ -29,6 +35,7 @@ export class GetMinutesResponseDto {
     latestModificationDate: Date | null;
     agreementCount: number;
     attendanceList: AttendanceItem[];
+    agreements: AgreementItem[];
 
     public static fromEntity(minutes: MinutesEntity): GetMinutesResponseDto {
         let latestModDate: Date | null = null;
@@ -59,6 +66,14 @@ export class GetMinutesResponseDto {
             }))
             : [];
 
+        const agreementListDto: AgreementItem[] = minutes.agreements
+            ? minutes.agreements.map((agreement) => ({
+                id: agreement.id,
+                name: agreement.name,
+                agreementNumber: agreement.agreementNumber,
+            }))
+            : [];
+
         return {
             id: minutes.id,
             name: minutes.name,
@@ -77,6 +92,7 @@ export class GetMinutesResponseDto {
             latestModificationDate: latestModDate,
             agreementCount: minutes.agreements ? minutes.agreements.length : 0,
             attendanceList: attendanceListDto,
+            agreements: agreementListDto,
         };
     }
 }

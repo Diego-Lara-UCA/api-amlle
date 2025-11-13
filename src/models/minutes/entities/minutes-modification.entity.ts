@@ -16,7 +16,7 @@ export class MinutesModification {
   @CreateDateColumn({ name: 'modification_date', type: 'timestamp' })
   modificationDate: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.minutesModifications, { nullable: false })
+  @ManyToOne(() => UserEntity, (user) => user.minutesModifications, { nullable: false, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'user_id' })
   modifier: UserEntity;
 
