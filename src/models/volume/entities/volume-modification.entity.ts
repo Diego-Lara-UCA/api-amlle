@@ -16,7 +16,7 @@ export class VolumeModification {
   @CreateDateColumn({ name: 'modification_date', type: 'timestamp' })
   modificationDate: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.volumeModifications, { nullable: false, onDelete: 'SET NULL' })
+  @ManyToOne(() => UserEntity, (user) => user.volumeModifications, { nullable: false, onDelete: "CASCADE" })
   @JoinColumn({ name: 'user_id' })
   modifier: UserEntity;
 
