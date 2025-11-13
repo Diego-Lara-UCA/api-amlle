@@ -1,3 +1,4 @@
+import { AgreementEntity } from 'src/models/agreement/entities/agreement.entity';
 import { MinutesEntity } from '../entities/minute.entity';
 import { MinutesType } from '../enums/minutes-status.enum';
 
@@ -15,6 +16,11 @@ type AgreementItem = {
     id: string;
     name: string;
     agreementNumber: number;
+    content: string;
+    createdAt: Date;
+    createdByName: string | null;
+    latestModifierName: string | null;
+    latestModificationDate: Date | null;
 };
 
 export class GetMinutesResponseDto {
@@ -67,11 +73,33 @@ export class GetMinutesResponseDto {
             : [];
 
         const agreementListDto: AgreementItem[] = minutes.agreements
-            ? minutes.agreements.map((agreement) => ({
-                id: agreement.id,
-                name: agreement.name,
-                agreementNumber: agreement.agreementNumber,
-            }))
+            ? minutes.agreements.map((agreement: AgreementEntity) => {
+
+                let agreementModDate: Date | null = null;
+                let agreementModName: string | null = null;
+
+                if (agreement.modifications && agreement.modifications.length > 0) {
+                    const sortedAgreementMods = [...agreement.modifications].sort(
+                        (a, b) => b.modificationDate.getTime() - a.modificationDate.getTime(),
+                    );
+                    const latestAgreementMod = sortedAgreementMods[0];
+                    agreementModDate = latestAgreementMod.modificationDate;
+                    if (latestAgreementMod.modifier) {
+                        agreementModName = latestAgreementMod.modifier.nombre;
+                    }
+                }
+
+                return {
+                    id: agreement.id,
+                    name: agreement.name,
+                    agreementNumber: agreement.agreementNumber,
+                    content: agreement.content,
+                    createdAt: agreement.createdAt,
+                    createdByName: agreement.createdBy?.nombre || 'Usuario desconocido',
+                    latestModifierName: agreementModName,
+                    latestModificationDate: agreementModDate,
+                };
+            })
             : [];
 
         return {

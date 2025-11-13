@@ -77,6 +77,9 @@ export class MinutesService {
           'attendanceList',
           'attendanceList.propietarioConvocado',
           'attendanceList.substitutoAsistente',
+          'agreements.createdBy',
+          'agreements.modifications',
+          'agreements.modifications.modifier',
         ],
         order: {
           createdAt: 'DESC',
@@ -103,6 +106,9 @@ export class MinutesService {
           'attendanceList',
           'attendanceList.propietarioConvocado',
           'attendanceList.substitutoAsistente',
+          'agreements.createdBy',
+          'agreements.modifications',
+          'agreements.modifications.modifier',
         ],
         order: {
           actNumber: 'ASC',
