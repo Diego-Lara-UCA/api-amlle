@@ -6,7 +6,7 @@ import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.use(json({ limit: '10mb' }));
+  app.use(json({ limit: '10mb' }));
   CorsConfig.EnableCors(app);
   GlobalPipe.ValidationPipe(app);
   await app.listen(process.env.PORT ?? 3000);
