@@ -4,6 +4,7 @@ import {
   ConflictException,
   BadRequestException,
   MethodNotAllowedException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,9 +19,12 @@ import Argon2idUtils from 'src/common/utils/argon2id.util';
 import { use } from 'passport';
 import { UpdateSessionSpecsDto } from './dto/update-session-specs.dto';
 import { SessionType } from './enums/session-type.enum';
+import { GetUserResponseDto } from './dto/get-user-response.dto';
+import { handleDatabaseError } from 'src/common/utils/error-handler.util';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger('UserService');
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -53,6 +57,21 @@ export class UserService {
     }
     return user;
   }
+
+  findOneByIdResponse = async (id: string): Promise<GetUserResponseDto> => { // 👈 Función flecha y DTO
+    let user: UserEntity | null;
+    try {
+      user = await this.userRepository.findOneBy({ id });
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger); // 👈 Manejo de errores
+    }
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con ID '${id}' no encontrado`);
+    }
+    
+    return GetUserResponseDto.fromEntity(user); 
+  };
 
   async findOneByName(name: string): Promise<UserEntity> {
     const user = await this.userRepository.findOneBy({ nombre: name });

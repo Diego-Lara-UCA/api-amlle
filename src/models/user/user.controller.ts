@@ -22,6 +22,7 @@ import { Role } from './enums/role.enum';
 import CryptoUtil from 'src/common/utils/crypto.util';
 import { Public } from 'src/common/utils/decorators/public.decorator';
 import { UpdateSessionSpecsDto } from './dto/update-session-specs.dto';
+import { GetUserResponseDto } from './dto/get-user-response.dto';
 
 @Controller('api/users')
 export class UserController {
@@ -43,9 +44,9 @@ export class UserController {
   }
 
   @Get('find/:id')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  async FindOneById(@Param('id', ParseUUIDPipe) id: string): Promise<UserEntity> {
-    return this.userService.findOneById(id);
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  async FindOneById(@Param('id', ParseUUIDPipe) id: string): Promise<GetUserResponseDto> {
+    return this.userService.findOneByIdResponse(id);
   }
 
   @Get('find-by-name/:name')
