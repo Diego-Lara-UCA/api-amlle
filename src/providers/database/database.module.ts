@@ -18,7 +18,9 @@ import { entities } from 'src/models';
             entities: entities, 
             synchronize: true,
             logging: false,
-            ssl: {rejectUnauthorized: true} //@TODO: agregar a .env
+            ssl: {rejectUnauthorized: true}, //@TODO: agregar a .env
+            retryAttempts: 3,
+            retryDelay: 2000,
         }),
         inject: [ConfigService],
     }),
