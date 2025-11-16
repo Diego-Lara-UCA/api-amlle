@@ -17,10 +17,11 @@ import { Roles } from 'src/common/utils/decorators/roles.decorator';
 import { Role } from 'src/models/user/enums/role.enum';
 import { User } from 'src/common/utils/decorators/user.decorator';
 import { UpdateAgreementNameNumberDto } from './dto/update-agreement-name-number.dto';
+import { GetAgreementManagementDto } from './dto/get-agreement-management.dto';
 
 @Controller('api/agreements')
 export class AgreementController {
-  constructor(private readonly agreementsService: AgreementService) {}
+  constructor(private readonly agreementsService: AgreementService) { }
 
   @Post("create")
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
@@ -74,5 +75,17 @@ export class AgreementController {
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   findAll() {
     return this.agreementsService.findAll();
+  }
+
+  @Get('count/total')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR) //
+  countAll() {
+    return this.agreementsService.countAllAgreements();
+  }
+
+  @Get('management/find-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR) //
+  findAllForManagement(): Promise<GetAgreementManagementDto[]> {
+    return this.agreementsService.findAllForManagement();
   }
 }

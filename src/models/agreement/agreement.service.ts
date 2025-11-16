@@ -15,6 +15,7 @@ import { MinutesService } from '../minutes/minute.service';
 import { AgreementModification } from './entities/agreement-modification.entity';
 import { UpdateAgreementNameNumberDto } from './dto/update-agreement-name-number.dto';
 import { GetAgreementResponseDto } from './dto/get-agreement-response.dto';
+import { GetAgreementManagementDto } from './dto/get-agreement-management.dto';
 
 @Injectable()
 export class AgreementService {
@@ -219,6 +220,74 @@ export class AgreementService {
 
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  countAllAgreements = async (): Promise<number> => {
+    try {
+      return await this.agreementRepository.count();
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger); //
+    }
+  };
+
+  findAllForManagement = async (): Promise<GetAgreementManagementDto[]> => {
+    try {
+      const query = this.agreementRepository.createQueryBuilder('agreement');
+
+      query.select([
+        'agreement.id AS id',
+        'agreement.name AS name',
+        'agreement.agreementNumber AS agreementNumber',
+        'agreement.createdAt AS createdAt',
+        'createdBy.nombre AS createdByName', //
+        'minutes.id AS minutesId',
+        'minutes.name AS minutesName', //
+        'volume.id AS volumeId',
+        'volume.name AS volumeName', //
+        'book.id AS bookId',
+        'book.name AS bookName', //
+      ]);
+
+      query.addSelect(
+        (subQuery) => {
+          return subQuery
+            .select('MAX(mod.modification_date)')
+            .from('agreement_modifications', 'mod') //
+            .where('mod.agreement_id = agreement.id');
+        },
+        'latestModificationDate',
+      );
+
+      query.addSelect(
+        (subQuery) => {
+          return subQuery
+            .select('user.nombre')
+            .from('agreement_modifications', 'mod')
+            .leftJoin('usuarios', 'user', 'user.id = mod.user_id') //
+            .where('mod.agreement_id = agreement.id')
+            .orderBy('mod.modification_date', 'DESC')
+            .limit(1);
+        },
+        'latestModifierName',
+      );
+
+      query
+        .leftJoin('agreement.createdBy', 'createdBy')
+        .leftJoin('agreement.minutes', 'minutes')
+        .leftJoin('minutes.volume', 'volume')
+        .leftJoin('volume.book', 'book');
+
+      query.groupBy(
+        'agreement.id, createdBy.nombre, minutes.id, volume.id, book.id'
+      );
+
+      query.orderBy('agreement.createdAt', 'DESC');
+
+      return await query.getRawMany();
+
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger); //
     }
   };
 }

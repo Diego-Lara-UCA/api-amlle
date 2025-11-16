@@ -21,10 +21,6 @@ import { entities } from 'src/models';
             ssl: {rejectUnauthorized: true}, //@TODO: agregar a .env
             retryAttempts: 3,
             retryDelay: 2000,
-            extra: {
-              keepAlive: true,
-              keepAliveInitialDelay: 30000
-            }
         }),
         inject: [ConfigService],
     }),

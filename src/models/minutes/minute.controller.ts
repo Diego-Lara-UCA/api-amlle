@@ -22,6 +22,7 @@ import { CreateSubstitutoDto } from './dto/create-substituto.dto';
 import { UpdateSubstitutoDto } from './dto/update-substituto.dto';
 import { AssignSubstitutoDto } from './dto/assign-substituto.dto';
 import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto';
+import { GetMinutesListDto } from './dto/get-minutes-list.dto';
 
 @Controller('api/')
 export class MinuteController {
@@ -67,7 +68,7 @@ export class MinuteController {
     return this.minutesService.removeMinutes(id);
   }
 
-  @Patch('update-name-number/:id')
+  @Patch('minutes/update-name-number/:id')
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   updateNameAndNumber(
     @Param('id', ParseUUIDPipe) id: string,
@@ -172,4 +173,18 @@ export class MinuteController {
   findAllMinutes() {
     return this.minutesService.findAllMinutes();
   }
+
+  @Get('minutes/count/total')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  countAllMinutes() {
+    return this.minutesService.countAllMinutes();
+  }
+
+  @Get('minutes/management/find-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
+  findAllForManagement(): Promise<GetMinutesListDto[]> {
+    return this.minutesService.findAllForManagement();
+  }
+
+  //@TODO: endpoint para gestión de libros, actas y acuerdos utilizando paginación y dto response específico
 }

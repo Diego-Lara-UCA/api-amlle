@@ -18,10 +18,11 @@ import { User } from 'src/common/utils/decorators/user.decorator';
 import { UpdateVolumeStatusDto } from './dto/update-volume-status.dto';
 import { VolumeService } from './volume.service';
 import { Public } from 'src/common/utils/decorators/public.decorator';
+import { GetVolumeManagementDto } from './dto/get-volume-management.dto';
 
 @Controller('api/volume')
 export class VolumeController {
-  constructor(private readonly volumesService: VolumeService) {}
+  constructor(private readonly volumesService: VolumeService) { }
 
   @Post("create")
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
@@ -64,5 +65,17 @@ export class VolumeController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.volumesService.remove(id);
+  }
+
+  @Get('count/total')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR) //
+  countAll() {
+    return this.volumesService.countAllVolumes();
+  }
+
+  @Get('management/find-all')
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR) //
+  findAllForManagement(): Promise<GetVolumeManagementDto[]> {
+    return this.volumesService.findAllForManagement();
   }
 }

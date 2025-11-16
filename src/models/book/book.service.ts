@@ -1,19 +1,21 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookEntity } from './entities/book.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { handleDatabaseError } from 'src/common/utils/error-handler.util';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { BookState } from './enums/book-state.enum';
 import { BookModification } from './entities/book-modification.entity';
+import { GetBookManagementDto } from './dto/get-book-management.dto';
 
 @Injectable()
 export class BookService {
     private readonly logger = new Logger('BooksService');
 
     constructor(
+        private readonly dataSource: DataSource,
         @InjectRepository(BookEntity)
         private readonly bookRepository: Repository<BookEntity>,
         @InjectRepository(BookModification)
@@ -128,6 +130,88 @@ export class BookService {
             return savedBook;
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
+        }
+    };
+
+    findAllForManagement = async (): Promise<GetBookManagementDto[]> => {
+        try {
+            const query = this.bookRepository.createQueryBuilder('book');
+
+            query.select([
+                'book.id AS id',
+                'book.name AS name',
+                'book.status AS status',
+                'book.authorizationDate AS authorizationDate',
+                'book.closingDate AS closingDate',
+                'book.createdAt AS createdAt',
+                'createdBy.nombre AS createdByName',
+            ]);
+
+            query.addSelect(
+                (subQuery) => subQuery
+                    .select('COUNT(DISTINCT vol.id)')
+                    .from('tomos', 'vol') //
+                    .where('vol.book_id = book.id'),
+                'volumeCount'
+            );
+
+            query.addSelect(
+                (subQuery) => subQuery
+                    .select('COUNT(DISTINCT min.id)')
+                    .from('tomos', 'vol')
+                    .leftJoin('actas', 'min', 'min.volume_id = vol.id') //
+                    .where('vol.book_id = book.id'),
+                'minutesCount'
+            );
+
+            query.addSelect(
+                (subQuery) => subQuery
+                    .select('COUNT(DISTINCT agr.id)')
+                    .from('tomos', 'vol')
+                    .leftJoin('actas', 'min', 'min.volume_id = vol.id')
+                    .leftJoin('acuerdos', 'agr', 'agr.minutesId = min.id') //
+                    .where('vol.book_id = book.id'),
+                'agreementCount'
+            );
+
+            query.addSelect(
+                (subQuery) => subQuery
+                    .select('MAX(mod.modification_date)')
+                    .from('book_modifications', 'mod') //
+                    .where('mod.book_id = book.id'),
+                'latestModificationDate'
+            );
+
+            query.addSelect(
+                (subQuery) => subQuery
+                    .select('user.nombre')
+                    .from('book_modifications', 'mod')
+                    .leftJoin('usuarios', 'user', 'user.id = mod.user_id') //
+                    .where('mod.book_id = book.id')
+                    .orderBy('mod.modification_date', 'DESC')
+                    .limit(1),
+                'latestModifierName'
+            );
+
+            query.leftJoin('book.createdBy', 'createdBy');
+
+            query.groupBy(
+                'book.id, book.name, book.status, book.authorizationDate, book.closingDate, book.createdAt, createdBy.nombre'
+            );
+
+            query.orderBy('book.createdAt', 'DESC');
+
+            const results = await query.getRawMany();
+
+            return results.map(r => ({
+                ...r,
+                volumeCount: parseInt(r.volumeCount, 10) || 0,
+                minutesCount: parseInt(r.minutesCount, 10) || 0,
+                agreementCount: parseInt(r.agreementCount, 10) || 0,
+            }));
+
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger); //
         }
     };
 }

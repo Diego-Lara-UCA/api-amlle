@@ -22,6 +22,7 @@ import { UpdateSubstitutoDto } from './dto/update-substituto.dto';
 import { AttendanceEntity } from './entities/attendance.entity';
 import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto';
 import { GetMinutesResponseDto } from './dto/get-minutes-response.dto';
+import { GetMinutesListDto } from './dto/get-minutes-list.dto';
 
 @Injectable()
 export class MinutesService {
@@ -430,6 +431,77 @@ export class MinutesService {
         throw new NotFoundException('El substituto no estaba asignado a este propietario.');
       }
       await this.propietarioRepository.save(propietario);
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  countAllMinutes = async (): Promise<number> => {
+    try {
+      return await this.minutesRepository.count();
+    } catch (error) {
+      throw handleDatabaseError(error, this.logger);
+    }
+  };
+
+  findAllForManagement = async (): Promise<GetMinutesListDto[]> => {
+    try {
+      const query = this.minutesRepository.createQueryBuilder('minutes');
+
+      query.select([
+        'minutes.id AS id',
+        'minutes.name AS name',
+        'minutes.createdAt AS createdAt',
+        'volume.id AS volumeId',
+        'volume.name AS volumeName',
+        'book.name AS bookName',
+        'createdBy.nombre AS createdByName',
+      ]);
+
+      query.addSelect('COUNT(DISTINCT agreements.id)', 'agreementCount');
+
+      query.addSelect(
+        (subQuery) => {
+          return subQuery
+            .select('MAX(mod.modification_date)')
+            .from('minutes_modifications', 'mod')
+            .where('mod.minutes_id = minutes.id');
+        },
+        'latestModificationDate',
+      );
+
+      query.addSelect(
+        (subQuery) => {
+          return subQuery
+            .select('user.nombre')
+            .from('minutes_modifications', 'mod')
+            .leftJoin('usuarios', 'user', 'user.id = mod.user_id')
+            .where('mod.minutes_id = minutes.id')
+            .orderBy('mod.modification_date', 'DESC')
+            .limit(1);
+        },
+        'latestModifierName',
+      );
+
+      query
+        .leftJoin('minutes.volume', 'volume')
+        .leftJoin('volume.book', 'book')
+        .leftJoin('minutes.createdBy', 'createdBy')
+        .leftJoin('minutes.agreements', 'agreements');
+
+      query.groupBy(
+        'minutes.id, minutes.name, minutes.createdAt, volume.id, volume.name, book.name, createdBy.nombre'
+      );
+
+      query.orderBy('minutes.createdAt', 'DESC');
+
+      const results = await query.getRawMany();
+
+      return results.map(r => ({
+        ...r,
+        agreementCount: parseInt(r.agreementCount, 10) || 0,
+      }));
+
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }

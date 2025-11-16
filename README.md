@@ -320,6 +320,15 @@ Endpoints para la administración de libros.
 
 ---
 
+
+### `GET /api/book/management/find-all`
+
+* **Descripción:** Obtiene una lista optimizada de todos los libros para la vista de gestión. Devuelve conteos agregados y campos seleccionados para alto rendimiento.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
 ## 📖 Volúmenes (`/api/volume`)
 
 Endpoints para la administración de volúmenes (tomos).
@@ -437,6 +446,22 @@ Endpoints para la administración de volúmenes (tomos).
 
 ---
 
+### `GET /api/volume/count/total`
+
+* **Descripción:** Obtiene el número total de volúmenes (tomos) creados.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `GET volume/management/find-all`
+
+* **Descripción:** Obtiene una lista optimizada de todos los volúmenes para la vista de gestión. Devuelve conteos agregados y campos seleccionados para alto rendimiento, excluyendo contenido pesado.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
 ## 📜 Actas y Participantes (`/api/`)
 
 Endpoints para la administración de actas y la gestión de participantes (Propietarios y Substitutos).
@@ -489,7 +514,6 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
       "actNumber": "number (opcional)",
       "meetingDate": "string (ISO 8601 Date, opcional)",
       "meetingTime": "string (opcional)",
-      "agenda": "string (opcional)",
       "bodyContent": "string (opcional)",
       "status": "MinutesType (enum, opcional)",
       "attendanceList": [
@@ -535,7 +559,7 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
 
 ---
 
-### `PATCH /api/update-name-number/:id`
+### `PATCH /api/minutes/update-name-number/:id`
 
 * **Descripción:** Actualiza el nombre y número de un acta. Si ya existe un acta con esos datos, los intercambia.
 * **Rol Requerido:** `ADMIN`
@@ -544,6 +568,29 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
     {
       "name": "string",
       "actNumber": "number"
+    }
+    ```
+
+---
+
+### `GET /api/minutes/count/total`
+
+* **Descripción:** Obtiene el número total de actas (minutes) creadas.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `PATCH /api/book/update/:id`
+
+* **Descripción:** Actualiza la información de un libro (ej. nombre, fechas).
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** `UpdateBookDto`
+    ```json
+    {
+      "name": "string (opcional)",
+      "authorizationDate": "string (ISO 8601 Date, opcional)",
+      "closingDate": "string (ISO 8601 Date, opcional)"
     }
     ```
 
@@ -749,9 +796,17 @@ Endpoints para la administración de acuerdos.
 
 ---
 
-### `GET /agreements/get-all`
+### `GET api/agreements/get-all`
 
 * **Descripción:** Obtiene una lista de todos los acuerdos (agreements) del sistema, formateados con el DTO de respuesta optimizado.
+* **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
+* **Body (DTO):** N/A
+
+---
+
+### `GET /agreements/count/total`
+
+* **Descripción:** Obtiene el número total de acuerdos (agreements) creados.
 * **Rol Requerido:** `SUPERADMIN`, `ADMIN`, `REGULAR`
 * **Body (DTO):** N/A
 
@@ -781,5 +836,3 @@ Endpoints para la búsqueda unificada a través de todas las entidades.
     }
     ```
 * **Body (DTO):** N/A
-
----

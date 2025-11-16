@@ -14,6 +14,7 @@ import { VolumeState } from './enums/volume-status.enum';
 import { BookService } from '../book/book.service';
 import { VolumeModification } from './entities/volume-modification.entity';
 import { GetVolumeResponseDto } from './dto/get-volume-response.dto';
+import { GetVolumeManagementDto } from './dto/get-volume-management.dto';
 
 @Injectable()
 export class VolumeService {
@@ -173,6 +174,81 @@ export class VolumeService {
             if (result.affected === 0) {
                 throw new NotFoundException(`Volumen con ID "${id}" no encontrado.`);
             }
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger);
+        }
+    };
+
+    countAllVolumes = async (): Promise<number> => {
+        try {
+            return await this.volumeRepository.count();
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger);
+        }
+    };
+
+    findAllForManagement = async (): Promise<GetVolumeManagementDto[]> => {
+        try {
+            const query = this.volumeRepository.createQueryBuilder('volume');
+
+            query.select([
+                'volume.id AS id',
+                'volume.name AS name',
+                'volume.pageCount AS pageCount',
+                'volume.number AS number',
+                'volume.status AS status',
+                'volume.createdAt AS createdAt',
+                'createdBy.nombre AS createdByName',
+                'book.id AS bookId',
+                'book.name AS bookName',
+            ]);
+
+            query.addSelect('COUNT(DISTINCT minutes.id)', 'minutesCount');
+            query.addSelect('COUNT(DISTINCT agreements.id)', 'agreementCount');
+
+            query.addSelect(
+                (subQuery) => {
+                    return subQuery
+                        .select('MAX(mod.modification_date)')
+                        .from('volume_modifications', 'mod') //
+                        .where('mod.volume_id = volume.id');
+                },
+                'latestModificationDate',
+            );
+
+            query.addSelect(
+                (subQuery) => {
+                    return subQuery
+                        .select('user.nombre')
+                        .from('volume_modifications', 'mod')
+                        .leftJoin('usuarios', 'user', 'user.id = mod.user_id') //
+                        .where('mod.volume_id = volume.id')
+                        .orderBy('mod.modification_date', 'DESC')
+                        .limit(1);
+                },
+                'latestModifierName',
+            );
+
+            query
+                .leftJoin('volume.createdBy', 'createdBy')
+                .leftJoin('volume.minutes', 'minutes')
+                .leftJoin('minutes.agreements', 'agreements')
+                .leftJoin('volume.book', 'book');
+
+            query.groupBy(
+                'volume.id, volume.name, volume.pageCount, volume.number, volume.status, volume.createdAt, createdBy.nombre, book.id, book.name'
+            );
+
+            query.orderBy('volume.createdAt', 'DESC');
+
+            const results = await query.getRawMany();
+
+            return results.map(r => ({
+                ...r,
+                minutesCount: parseInt(r.minutesCount, 10) || 0,
+                agreementCount: parseInt(r.agreementCount, 10) || 0,
+            }));
+
         } catch (error) {
             throw handleDatabaseError(error, this.logger);
         }
