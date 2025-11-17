@@ -9,6 +9,11 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { BookState } from './enums/book-state.enum';
 import { BookModification } from './entities/book-modification.entity';
 import { GetBookManagementDto } from './dto/get-book-management.dto';
+import { GetBookAgreementsContentDto } from './dto/get-book-agreements-content.dto';
+
+type AgreementContentRawResult = {
+    content: string;
+};
 
 @Injectable()
 export class BookService {
@@ -212,6 +217,39 @@ export class BookService {
 
         } catch (error) {
             throw handleDatabaseError(error, this.logger); //
+        }
+    };
+
+    findAllAgreementsContentByBookId = async (id: string): Promise<GetBookAgreementsContentDto> => {
+        try {
+            const book = await this.bookRepository.findOne({
+                where: { id },
+                select: ['id', 'name'],
+            });
+
+            if (!book) {
+                throw new NotFoundException(`Libro con ID "${id}" no encontrado.`);
+            }
+
+            const results = await this.bookRepository.createQueryBuilder('book')
+                .leftJoin('book.volumes', 'volume')
+                .leftJoin('volume.minutes', 'minutes')
+                .leftJoin('minutes.agreements', 'agreement')
+                .select('agreement.content', 'content')
+                .where('book.id = :id', { id })
+                .andWhere('agreement.content IS NOT NULL')
+                .getRawMany<AgreementContentRawResult>();
+
+            const contents: string[] = results.map(r => r.content);
+
+            return {
+                bookId: book.id,
+                bookName: book.name,
+                agreementContents: contents,
+            };
+
+        } catch (error) {
+            throw handleDatabaseError(error, this.logger);
         }
     };
 }

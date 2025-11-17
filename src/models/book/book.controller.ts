@@ -20,6 +20,7 @@ import { UpdateBookDto } from './dto/update-book.dto';
 import { UpdateBookStatusDto } from './dto/update-book-status.dto';
 import { Public } from 'src/common/utils/decorators/public.decorator';
 import { GetBookManagementDto } from './dto/get-book-management.dto';
+import { GetBookAgreementsContentDto } from './dto/get-book-agreements-content.dto';
 
 @Controller("api/book")
 export class BookController {
@@ -68,5 +69,11 @@ export class BookController {
     @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
     findAllForManagement(): Promise<GetBookManagementDto[]> {
       return this.booksService.findAllForManagement();
+    }
+
+    @Get('build/all-agreements-content/:id')
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR) //
+    findAllAgreementsContentByBookId(@Param('id', ParseUUIDPipe) id: string): Promise<GetBookAgreementsContentDto> {
+        return this.booksService.findAllAgreementsContentByBookId(id);
     }
 } 
