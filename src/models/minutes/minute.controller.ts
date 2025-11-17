@@ -167,13 +167,7 @@ export class MinuteController {
       substitutoId,
     );
   }
-
-  @Get('minutes/find-all')
-  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
-  findAllMinutes() {
-    return this.minutesService.findAllMinutes();
-  }
-
+  
   @Get('minutes/count/total')
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   countAllMinutes() {
@@ -185,6 +179,4 @@ export class MinuteController {
   findAllForManagement(): Promise<GetMinutesListDto[]> {
     return this.minutesService.findAllForManagement();
   }
-
-  //@TODO: endpoint para gestión de libros, actas y acuerdos utilizando paginación y dto response específico
 }
