@@ -3,10 +3,8 @@ import { MinutesEntity } from '../entities/minute.entity';
 import { MinutesType } from '../enums/minutes-status.enum';
 
 type AttendanceItem = {
-    secretary: string;
-    syndic: string;
-    propietarioId: string;
-    propietarioName: string;
+    propietarioId: string | null;
+    propietarioName: string | null;
     attended: boolean;
     substituteId: string | null;
     substituteName: string | null;
@@ -16,7 +14,6 @@ type AgreementItem = {
     id: string;
     name: string;
     agreementNumber: number;
-    content: string;
     createdAt: Date;
     createdByName: string | null;
     latestModifierName: string | null;
@@ -32,8 +29,8 @@ export class GetMinutesResponseDto {
     status: MinutesType;
     bodyContent: string;
     createdAt: Date;
-    volumeId: string;
-    volumeName: string;
+    volumeId: string | null;
+    volumeName: string | null;
     bookId: string | null;
     bookName: string | null;
     createdByName: string;
@@ -62,10 +59,8 @@ export class GetMinutesResponseDto {
 
         const attendanceListDto: AttendanceItem[] = minutes.attendanceList
             ? minutes.attendanceList.map((att) => ({
-                secretary: att.secretary,
-                syndic: att.syndic,
-                propietarioId: att.propietarioConvocado?.id,
-                propietarioName: att.propietarioConvocado?.name,
+                propietarioId: att.propietarioConvocado?.id || null,
+                propietarioName: att.propietarioConvocado?.name || null,
                 attended: att.asistioPropietario,
                 substituteId: att.substitutoAsistente?.id || null,
                 substituteName: att.substitutoAsistente?.name || null,
@@ -93,7 +88,6 @@ export class GetMinutesResponseDto {
                     id: agreement.id,
                     name: agreement.name,
                     agreementNumber: agreement.agreementNumber,
-                    content: agreement.content,
                     createdAt: agreement.createdAt,
                     createdByName: agreement.createdBy?.nombre || 'Usuario desconocido',
                     latestModifierName: agreementModName,
@@ -101,6 +95,9 @@ export class GetMinutesResponseDto {
                 };
             })
             : [];
+        
+        const volume = minutes.volume;
+        const book = volume?.book;
 
         return {
             id: minutes.id,
@@ -111,10 +108,10 @@ export class GetMinutesResponseDto {
             bodyContent: minutes.bodyContent,
             status: minutes.status,
             createdAt: minutes.createdAt,
-            volumeId: minutes.volume?.id,
-            volumeName: minutes.volume?.name,
-            bookId: minutes.volume?.book?.id,
-            bookName: minutes.volume?.book?.name,
+            volumeId: volume?.id || null,
+            volumeName: volume?.name || null,
+            bookId: book?.id || null,
+            bookName: book?.name || null,
             createdByName: minutes.createdBy?.nombre || 'Usuario desconocido',
             latestModifierName: latestModName,
             latestModificationDate: latestModDate,

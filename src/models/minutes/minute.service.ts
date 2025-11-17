@@ -98,28 +98,87 @@ export class MinutesService {
     try {
       const minutesList = await this.minutesRepository.find({
         where: { volume: { id: volumeId } },
-        relations: [
-          'volume',
-          'createdBy',
-          'agreements',
-          'modifications',
-          'modifications.modifier',
-          'attendanceList',
-          'attendanceList.propietarioConvocado',
-          'attendanceList.substitutoAsistente',
-          'agreements.createdBy',
-          'agreements.modifications',
-          'agreements.modifications.modifier',
-        ],
         order: {
           actNumber: 'ASC',
+        },
+        relations: {
+          volume: {
+            book: true,
+          },
+          createdBy: true,
+          agreements: {
+            createdBy: true,
+            modifications: {
+              modifier: true,
+            },
+          },
+          modifications: {
+            modifier: true,
+          },
+          attendanceList: {
+            propietarioConvocado: true,
+            substitutoAsistente: true,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          actNumber: true,
+          meetingDate: true,
+          meetingTime: true,
+          bodyContent: true, 
+          status: true,
+          createdAt: true,
+          volume: {
+            id: true,
+            name: true,
+            book: {
+              id: true,
+              name: true,
+            },
+          },
+          createdBy: {
+            nombre: true,
+          },
+          modifications: {
+            modificationDate: true,
+            modifier: {
+              nombre: true,
+            },
+          },
+          attendanceList: {
+            asistioPropietario: true,
+            propietarioConvocado: {
+              id: true,
+              name: true,
+            },
+            substitutoAsistente: {
+              id: true,
+              name: true,
+            },
+          },
+          agreements: {
+            id: true,
+            name: true,
+            agreementNumber: true,
+            createdAt: true,
+            createdBy: {
+              nombre: true,
+            },
+            modifications: {
+              modificationDate: true,
+              modifier: {
+                nombre: true,
+              },
+            },
+          },
         },
       });
 
       return minutesList.map(minutes => GetMinutesResponseDto.fromEntity(minutes));
 
     } catch (error) {
-      throw handleDatabaseError(error, this.logger);
+      throw handleDatabaseError(error, this.logger); //
     }
   };
 
