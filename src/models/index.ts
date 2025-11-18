@@ -1,3 +1,4 @@
+import { AgreementModification } from "./agreement/entities/agreement-modification.entity";
 import { AgreementEntity } from "./agreement/entities/agreement.entity";
 import { BookModification } from "./book/entities/book-modification.entity";
 import { BookEntity } from "./book/entities/book.entity";
@@ -26,5 +27,5 @@ export  const entities = [
     BookModification,
     VolumeModification,
     MinutesModification,
-    VolumeModification
+    AgreementModification
 ]

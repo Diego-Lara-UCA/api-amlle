@@ -15,7 +15,7 @@ import { entities } from 'src/models';
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_NAME'),
             autoLoadEntities: true,
-            entities: entities, 
+            //entities: entities, 
             synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
             logging: false,
             ssl: {rejectUnauthorized: true},

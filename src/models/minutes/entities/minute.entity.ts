@@ -68,17 +68,17 @@ export class MinutesEntity {
   modifications: MinutesModification[];
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'datetime2',
     name: 'created_at',
-    default: () => 'CURRENT_TIMESTAMP(6)',
+    default: () => 'GETDATE()',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
+    type: 'datetime2',
     name: 'updated_at',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
+    default: () => 'GETDATE()',
+    onUpdate: 'GETDATE()',
   })
   updatedAt: Date;
 }

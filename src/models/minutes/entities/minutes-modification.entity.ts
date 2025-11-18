@@ -13,10 +13,10 @@ export class MinutesModification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn({ name: 'modification_date', type: 'timestamp' })
+  @CreateDateColumn({ name: 'modification_date', type: 'datetime2' })
   modificationDate: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.minutesModifications, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (user) => user.minutesModifications, { nullable: false, onDelete: 'NO ACTION' })
   @JoinColumn({ name: 'user_id' })
   modifier: UserEntity;
 

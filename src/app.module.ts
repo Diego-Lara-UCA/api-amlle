@@ -16,6 +16,10 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    DatabaseModule,
     SearchModule,
     AgreementModule,
     MinutesModule,
@@ -23,15 +27,11 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     BookModule,
     AuthModule,
     UserModule,
-    ConfigModule.forRoot({
-      isGlobal: true
-    }),
-    TypeOrmModule.forFeature(entities),
-    DatabaseModule
+    //TypeOrmModule.forFeature(entities),
   ],
   controllers: [],
   providers: [
-    MinutesService, {
+    {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     }],

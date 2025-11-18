@@ -16,8 +16,7 @@ export class CreateVolumeDto {
   @IsInt()
   @IsPositive()
   number: number;
-
-  @IsUUID()
+  
   @IsNotEmpty()
   bookId: string;
 

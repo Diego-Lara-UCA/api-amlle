@@ -68,7 +68,7 @@ export class VolumeEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.createdVolumes, {
     nullable: false,
-    onDelete: "CASCADE"
+    onDelete: "NO ACTION"
   })
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
@@ -76,9 +76,9 @@ export class VolumeEntity {
   @OneToMany(() => VolumeModification, (mod) => mod.volume)
   modifications: VolumeModification[];
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'datetime2' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'datetime2' })
   updatedAt: Date;
 }

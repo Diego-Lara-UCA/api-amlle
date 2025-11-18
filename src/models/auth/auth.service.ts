@@ -18,8 +18,13 @@ export class AuthService {
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string }> {
     const user = await this.userService.findUserByNombreForAuth(loginDto.name);
+
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    if (!user.activo) {
+      throw new UnauthorizedException('Usuario inactivo. Por favor, establezca una contraseña primero.');
     }
 
     const isPasswordValid = await Argon2idUtils.Compare(loginDto.password, user.contrasena);

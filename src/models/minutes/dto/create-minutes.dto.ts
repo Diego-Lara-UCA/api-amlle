@@ -9,7 +9,6 @@ import {
 import { MinutesType } from '../enums/minutes-status.enum';
 
 export class CreateMinutesDto {
-  @IsUUID()
   @IsNotEmpty()
   volumeId: string;
 

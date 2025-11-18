@@ -25,7 +25,7 @@ export class AgreementEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.createdAgreements, {
     nullable: false,
-    onDelete: 'CASCADE'
+    onDelete: 'NO ACTION'
   })
   @JoinColumn({ name: 'created_by_id' })
   createdBy: UserEntity;
@@ -34,17 +34,17 @@ export class AgreementEntity {
   modifications: AgreementModification[];
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'datetime2',
     name: 'created_at',
-    default: () => 'CURRENT_TIMESTAMP(6)',
+    default: () => 'GETDATE()',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
+    type: 'datetime2',
     name: 'updated_at',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
+    default: () => 'GETDATE()',
+    onUpdate: 'GETDATE()',
   })
   updatedAt: Date;
 }
