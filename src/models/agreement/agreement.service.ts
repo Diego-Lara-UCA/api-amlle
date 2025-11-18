@@ -231,7 +231,7 @@ export class AgreementService {
     }
   };
 
-  findAllForManagement = async (): Promise<GetAgreementManagementDto[]> => {
+findAllForManagement = async (): Promise<GetAgreementManagementDto[]> => {
     try {
       const query = this.agreementRepository.createQueryBuilder('agreement');
 
@@ -239,32 +239,32 @@ export class AgreementService {
         'agreement.id AS id',
         'agreement.name AS name',
         'agreement.agreementNumber AS agreementNumber',
+        'agreement.content AS content',
         'agreement.createdAt AS createdAt',
-        'createdBy.nombre AS createdByName', //
+        'createdBy.nombre AS createdByName',
         'minutes.id AS minutesId',
-        'minutes.name AS minutesName', //
+        'minutes.name AS minutesName',
         'volume.id AS volumeId',
-        'volume.name AS volumeName', //
+        'volume.name AS volumeName',
         'book.id AS bookId',
-        'book.name AS bookName', //
+        'book.name AS bookName',
       ]);
 
       query.addSelect(
         (subQuery) => {
           return subQuery
             .select('MAX(mod.modification_date)')
-            .from('agreement_modifications', 'mod') //
+            .from('agreement_modifications', 'mod')
             .where('mod.agreement_id = agreement.id');
         },
         'latestModificationDate',
       );
-
       query.addSelect(
         (subQuery) => {
           return subQuery
             .select('user.nombre')
             .from('agreement_modifications', 'mod')
-            .leftJoin('usuarios', 'user', 'user.id = mod.user_id') //
+            .leftJoin('usuarios', 'user', 'user.id = mod.user_id')
             .where('mod.agreement_id = agreement.id')
             .orderBy('mod.modification_date', 'DESC')
             .limit(1);
@@ -279,15 +279,18 @@ export class AgreementService {
         .leftJoin('volume.book', 'book');
 
       query.groupBy(
-        'agreement.id, createdBy.nombre, minutes.id, volume.id, book.id'
+        'agreement.id, agreement.name, agreement.agreementNumber, agreement.content, agreement.createdAt, ' +
+        'createdBy.nombre, ' +
+        'minutes.id, minutes.name, ' +
+        'volume.id, volume.name, ' +
+        'book.id, book.name'
       );
-
+      
       query.orderBy('agreement.createdAt', 'DESC');
 
       return await query.getRawMany();
-
     } catch (error) {
-      throw handleDatabaseError(error, this.logger); //
+      throw handleDatabaseError(error, this.logger);
     }
   };
 }
