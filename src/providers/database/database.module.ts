@@ -8,19 +8,23 @@ import { entities } from 'src/models';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-            type: 'mysql',
+            type: 'mssql',
             host: configService.get<string>('DB_HOST'),
-            port: configService.get<number>('DB_PORT'),
+            port: parseInt(configService.get<string>('DB_PORT', '1433'), 10),
             username: configService.get<string>('DB_USERNAME'),
             password: configService.get<string>('DB_PASSWORD'),
             database: configService.get<string>('DB_NAME'),
             autoLoadEntities: true,
             entities: entities, 
-            synchronize: true,
+            synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
             logging: false,
-            ssl: {rejectUnauthorized: true}, //@TODO: agregar a .env
+            ssl: {rejectUnauthorized: true},
             retryAttempts: 3,
             retryDelay: 2000,
+            options: {
+              encrypt: configService.get('DB_ENCRYPT') === 'true', 
+              trustServerCertificate: configService.get('DB_TRUST_SERVER_CERTIFICATE') === 'true',
+            }
         }),
         inject: [ConfigService],
     }),

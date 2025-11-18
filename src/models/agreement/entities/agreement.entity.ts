@@ -14,7 +14,7 @@ export class AgreementEntity {
   @Column({ type: 'int' })
   agreementNumber: number;
 
-  @Column({ name: 'description_html', type: 'longtext', nullable: true })
+  @Column({ name: 'description_html', type: 'nvarchar', length: 'max', nullable: true })
   content: string;
   
   @ManyToOne(() => MinutesEntity, (minutes) => minutes.agreements, {

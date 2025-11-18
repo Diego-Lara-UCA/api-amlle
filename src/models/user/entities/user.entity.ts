@@ -32,7 +32,8 @@ export class UserEntity {
   contrasena: string;
 
   @Column({
-    type: 'enum',
+    type: 'nvarchar',
+    length: 50,
     enum: Role,
     default: Role.REGULAR,
   })
@@ -62,11 +63,12 @@ export class UserEntity {
   @OneToMany(() => AgreementModification, (mod) => mod.modifier)
   agreementModifications: AgreementModification[];
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'bit', default: 0 })
   activo: boolean;
 
   @Column({
-    type: 'enum',
+    type: 'nvarchar',
+    length: 50,
     enum: SessionType,
     default: SessionType.TEMPORAL,
   })

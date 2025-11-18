@@ -25,7 +25,7 @@ export class VolumeEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   name: string;
   
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'nvarchar', length: 'max', nullable: true })
   pdfSettings: PdfSettings;
 
   @Column({ type: 'int' })
@@ -35,7 +35,8 @@ export class VolumeEntity {
   pageCount: number
 
   @Column({
-    type: 'enum',
+    type: 'nvarchar',
+    length: 50,
     enum: VolumeState,
     default: VolumeState.BORRADOR,
   })

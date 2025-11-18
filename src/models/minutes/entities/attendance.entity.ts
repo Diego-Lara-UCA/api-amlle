@@ -33,7 +33,7 @@ export class AttendanceEntity {
   @JoinColumn({ name: 'propietario_convocado_id' })
   propietarioConvocado: PropietarioEntity;
 
-  @Column({ name: 'asistio_propietario', type: 'boolean', default: false })
+  @Column({ name: 'asistio_propietario', type: 'bit', default: false })
   asistioPropietario: boolean;
 
   @ManyToOne(() => SubstitutoEntity, (substituto) => substituto.attendedAsSubstitute, {

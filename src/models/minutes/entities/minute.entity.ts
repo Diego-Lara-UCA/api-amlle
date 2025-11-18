@@ -34,11 +34,12 @@ export class MinutesEntity {
   @Column({ name: 'meeting_time', nullable: true })
   meetingTime: string;
 
-  @Column({ name: 'description_html', type: 'longtext', nullable: true })
+  @Column({ name: 'description_html', type: 'nvarchar', length: 'max', nullable: true })
   bodyContent: string;
 
   @Column({
-    type: 'enum',
+    type: 'nvarchar',
+    length: 50,
     enum: MinutesType,
     default: MinutesType.ORDINARIA,
   })

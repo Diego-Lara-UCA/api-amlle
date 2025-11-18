@@ -25,7 +25,8 @@ export class BookEntity {
   name: string;
 
   @Column({
-    type: 'enum',
+    type: 'nvarchar',
+    length: 50,
     enum: BookState,
     default: BookState.BORRADOR,
   })
