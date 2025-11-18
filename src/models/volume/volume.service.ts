@@ -15,6 +15,7 @@ import { BookService } from '../book/book.service';
 import { VolumeModification } from './entities/volume-modification.entity';
 import { GetVolumeResponseDto } from './dto/get-volume-response.dto';
 import { GetVolumeManagementDto } from './dto/get-volume-management.dto';
+import { log } from 'console';
 
 @Injectable()
 export class VolumeService {
@@ -35,10 +36,10 @@ export class VolumeService {
     ): Promise<VolumeEntity> => {
         try {
             const { bookId, ...volumeData } = createVolumeDto;
-
+            
             const user = await this.userService.findOneById(userId);
             const book = await this.booksService.findOneById(bookId);
-
+            
             const newVolume = this.volumeRepository.create({
                 ...volumeData,
                 book: book,

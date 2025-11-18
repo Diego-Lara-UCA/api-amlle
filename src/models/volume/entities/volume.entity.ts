@@ -16,6 +16,7 @@ import { MinutesEntity } from 'src/models/minutes/entities/minute.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { PdfSettings } from '../types/pdf-settings.type';
 import { VolumeModification } from './volume-modification.entity';
+import { JsonTransformer } from 'src/common/utils/json-transformer.util';
 
 @Entity('tomos')
 export class VolumeEntity {
@@ -25,7 +26,7 @@ export class VolumeEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   name: string;
   
-  @Column({ type: 'nvarchar', length: 'max', nullable: true })
+  @Column({ type: 'nvarchar', length: 'max', nullable: true, transformer: new JsonTransformer()})
   pdfSettings: PdfSettings;
 
   @Column({ type: 'int' })
