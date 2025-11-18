@@ -239,7 +239,6 @@ findAllForManagement = async (): Promise<GetAgreementManagementDto[]> => {
         'agreement.id AS id',
         'agreement.name AS name',
         'agreement.agreementNumber AS agreementNumber',
-        'agreement.content AS content',
         'agreement.createdAt AS createdAt',
         'createdBy.nombre AS createdByName',
         'minutes.id AS minutesId',
