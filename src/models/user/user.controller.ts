@@ -45,7 +45,7 @@ export class UserController {
   }
 
   @Get('find/:id')
-  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.REGULAR)
   async FindOneById(@Param('id', ParseUUIDPipe) id: string): Promise<GetUserResponseDto> {
     return this.userService.findOneByIdResponse(id);
   }
