@@ -126,7 +126,7 @@ export class MinutesService {
           actNumber: true,
           meetingDate: true,
           meetingTime: true,
-          bodyContent: true, 
+          bodyContent: true,
           status: true,
           createdAt: true,
           volume: {
@@ -463,12 +463,22 @@ export class MinutesService {
         this.findOnePropietario(propietarioId),
         this.findOneSubstituto(substitutoId),
       ]);
-      const alreadyAssigned = propietario.approvedSubstitutes.some(
+
+      const alreadyAssignedToThis = propietario.approvedSubstitutes.some(
         (sub) => sub.id === substituto.id,
       );
-      if (alreadyAssigned) {
+
+      if (alreadyAssignedToThis) {
         throw new ConflictException('Este substituto ya está asignado a este propietario.');
       }
+
+      if (substituto.canSubstituteFor && substituto.canSubstituteFor.length > 0) {
+        const currentOwnerName = substituto.canSubstituteFor[0].name;
+        throw new ConflictException(
+          `Este substituto ya pertenece al propietario "${currentOwnerName}". No puede ser asignado a otro.`,
+        );
+      }
+
       propietario.approvedSubstitutes.push(substituto);
       return await this.propietarioRepository.save(propietario);
     } catch (error) {
