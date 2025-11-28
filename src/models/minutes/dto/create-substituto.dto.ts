@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, IsEnum } from 'class-validator';
-import { SubstitutoType } from '../enums/substituto.entity';
+import { SubstitutoType } from '../enums/substituto-type.enum';
 
 export class CreateSubstitutoDto {
   @IsString()

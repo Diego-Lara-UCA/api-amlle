@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { PropietarioEntity } from './propietario.entity';
 import { AttendanceEntity } from './attendance.entity';
-import { SubstitutoType } from '../enums/substituto.entity';
+import { SubstitutoType } from '../enums/substituto-type.enum';
 
 @Entity('substitutos')
 export class SubstitutoEntity {

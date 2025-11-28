@@ -21,7 +21,7 @@ export class PropietarioEntity {
   @Column({
     type: 'nvarchar',
     length: 100,
-    nullable: false,
+    nullable: true,
   })
   type: PropietarioType;
 

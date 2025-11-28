@@ -24,7 +24,7 @@ import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto
 import { GetMinutesResponseDto } from './dto/get-minutes-response.dto';
 import { GetMinutesListDto } from './dto/get-minutes-list.dto';
 import { PropietarioType } from './enums/propietario-type.enum';
-import { SubstitutoType } from './enums/substituto.entity';
+import { SubstitutoType } from './enums/substituto-type.enum';
 
 @Injectable()
 export class MinutesService {
@@ -335,7 +335,7 @@ export class MinutesService {
     }
   };
 
-  private readonly typeMapping: Record<PropietarioType, SubstitutoType> = {
+private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> = {
     [PropietarioType.PRIMER_REGIDOR]: SubstitutoType.PRIMER_SUPLENTE,
     [PropietarioType.SEGUNDO_REGIDOR]: SubstitutoType.SEGUNDO_SUPLENTE,
     [PropietarioType.TERCER_REGIDOR]: SubstitutoType.TERCER_SUPLENTE,

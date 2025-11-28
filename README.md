@@ -602,12 +602,6 @@ Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplente
 
 ---
 
-### Endpoints de Participantes (Maestra)
-
-Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplentes).
-
----
-
 ### `POST /api/participants/propietarios`
 
 * **Descripción:** Crea un nuevo participante "Propietario" en la lista maestra.
@@ -615,7 +609,8 @@ Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplente
 * **Body (DTO):** `CreatePropietarioDto`
     ```json
     {
-      "name": "string"
+      "name": "string",
+      "type": "PRIMER_REGIDOR" | "SEGUNDO_REGIDOR" | "TERCER_REGIDOR" | "CUARTO_REGIDOR" | "PRIMER_SUPLENTE" | "SEGUNDO_SUPLENTE" | "TERCER_SUPLENTE" | "CUARTO_SUPLENTE" | "ALCALDESA" | "SECRETARIA" | "SINDICO" 
     }
     ```
 
