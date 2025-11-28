@@ -23,6 +23,8 @@ import { AttendanceEntity } from './entities/attendance.entity';
 import { UpdateMinutesNameNumberDto } from './dto/update-minutes-name-number.dto';
 import { GetMinutesResponseDto } from './dto/get-minutes-response.dto';
 import { GetMinutesListDto } from './dto/get-minutes-list.dto';
+import { PropietarioType } from './enums/propietario-type.enum';
+import { SubstitutoType } from './enums/substituto.entity';
 
 @Injectable()
 export class MinutesService {
@@ -333,6 +335,12 @@ export class MinutesService {
     }
   };
 
+  private readonly typeMapping: Record<PropietarioType, SubstitutoType> = {
+    [PropietarioType.PRIMER_REGIDOR]: SubstitutoType.PRIMER_SUPLENTE,
+    [PropietarioType.SEGUNDO_REGIDOR]: SubstitutoType.SEGUNDO_SUPLENTE,
+    [PropietarioType.TERCER_REGIDOR]: SubstitutoType.TERCER_SUPLENTE,
+    [PropietarioType.CUARTO_REGIDOR]: SubstitutoType.CUARTO_SUPLENTE,
+  };
 
   createPropietario = async (dto: CreatePropietarioDto): Promise<PropietarioEntity> => {
     try {
@@ -467,7 +475,6 @@ export class MinutesService {
       const alreadyAssignedToThis = propietario.approvedSubstitutes.some(
         (sub) => sub.id === substituto.id,
       );
-
       if (alreadyAssignedToThis) {
         throw new ConflictException('Este substituto ya está asignado a este propietario.');
       }
@@ -475,7 +482,15 @@ export class MinutesService {
       if (substituto.canSubstituteFor && substituto.canSubstituteFor.length > 0) {
         const currentOwnerName = substituto.canSubstituteFor[0].name;
         throw new ConflictException(
-          `Este substituto ya pertenece al propietario "${currentOwnerName}". No puede ser asignado a otro.`,
+          `Este substituto ya pertenece al propietario "${currentOwnerName}".`,
+        );
+      }
+
+      const requiredSubstitutoType = this.typeMapping[propietario.type];
+
+      if (requiredSubstitutoType && substituto.type !== requiredSubstitutoType) {
+        throw new ConflictException(
+          `Error de Jerarquía: Un '${propietario.type}' solo puede tener como suplente a un '${requiredSubstitutoType}'. El suplente actual es '${substituto.type}'.`
         );
       }
 

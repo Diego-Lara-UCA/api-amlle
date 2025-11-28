@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { SubstitutoEntity } from './substituto.entity';
 import { AttendanceEntity } from './attendance.entity';
+import { PropietarioType } from '../enums/propietario-type.enum';
 
 @Entity('propietarios')
 export class PropietarioEntity {
@@ -16,6 +17,13 @@ export class PropietarioEntity {
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
+
+  @Column({
+    type: 'nvarchar',
+    length: 100,
+    nullable: false,
+  })
+  type: PropietarioType;
 
   @ManyToMany(() => SubstitutoEntity, (substituto) => substituto.canSubstituteFor)
   @JoinTable({

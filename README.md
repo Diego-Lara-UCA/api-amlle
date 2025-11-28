@@ -602,6 +602,12 @@ Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplente
 
 ---
 
+### Endpoints de Participantes (Maestra)
+
+Rutas para gestionar las listas maestras de Propietarios y Substitutos (Suplentes).
+
+---
+
 ### `POST /api/participants/propietarios`
 
 * **Descripción:** Crea un nuevo participante "Propietario" en la lista maestra.
