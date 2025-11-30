@@ -25,6 +25,9 @@ export class PropietarioEntity {
   })
   type: PropietarioType;
 
+  @Column({ type: 'bit', default: 1 })
+  active: boolean;
+
   @ManyToMany(() => SubstitutoEntity, (substituto) => substituto.canSubstituteFor)
   @JoinTable({
     name: 'propietario_substitutos_habilitados',

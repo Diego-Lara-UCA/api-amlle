@@ -335,7 +335,7 @@ export class MinutesService {
     }
   };
 
-private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> = {
+  private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> = {
     [PropietarioType.PRIMER_REGIDOR]: SubstitutoType.PRIMER_SUPLENTE,
     [PropietarioType.SEGUNDO_REGIDOR]: SubstitutoType.SEGUNDO_SUPLENTE,
     [PropietarioType.TERCER_REGIDOR]: SubstitutoType.TERCER_SUPLENTE,
@@ -353,9 +353,16 @@ private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> =
 
   findAllPropietarios = async (): Promise<PropietarioEntity[]> => {
     try {
-      return await this.propietarioRepository.find({
-        relations: ['approvedSubstitutes'],
-      });
+      return await this.propietarioRepository.createQueryBuilder('propietario')
+        .leftJoinAndSelect(
+          'propietario.approvedSubstitutes',
+          'substituto',
+          'substituto.active = :active',
+          { active: true }
+        )
+        .where('propietario.active = :active', { active: true })
+        .getMany();
+
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -393,10 +400,13 @@ private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> =
 
   removePropietario = async (id: string): Promise<void> => {
     try {
-      const result = await this.propietarioRepository.delete(id);
-      if (result.affected === 0) {
+      const propietario = await this.findOnePropietario(id);
+      if (propietario === null) {
         throw new NotFoundException(`Propietario con ID "${id}" no encontrado.`);
       }
+      propietario.active = false; // 👈 Soft Delete
+      await this.propietarioRepository.save(propietario);
+
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }
@@ -414,6 +424,7 @@ private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> =
   findAllSubstitutos = async (): Promise<SubstitutoEntity[]> => {
     try {
       return await this.substitutoRepository.find({
+        where: { active: true },
         relations: ['canSubstituteFor'],
       });
     } catch (error) {
@@ -453,10 +464,13 @@ private readonly typeMapping: Partial<Record<PropietarioType, SubstitutoType>> =
 
   removeSubstituto = async (id: string): Promise<void> => {
     try {
-      const result = await this.substitutoRepository.delete(id);
-      if (result.affected === 0) {
+      const substituto = await this.findOneSubstituto(id);
+      if (substituto === null) {
         throw new NotFoundException(`Substituto con ID "${id}" no encontrado.`);
       }
+      substituto.active = false;
+      await this.substitutoRepository.save(substituto);
+
     } catch (error) {
       throw handleDatabaseError(error, this.logger);
     }

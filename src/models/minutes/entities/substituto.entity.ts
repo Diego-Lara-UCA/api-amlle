@@ -24,6 +24,9 @@ export class SubstitutoEntity {
   })
   type: SubstitutoType;
 
+  @Column({ type: 'bit', default: 1 })
+  active: boolean;
+
   @ManyToMany(() => PropietarioEntity, (propietario) => propietario.approvedSubstitutes)
   canSubstituteFor: PropietarioEntity[];
 
