@@ -516,6 +516,7 @@ Endpoints para la administración de actas y la gestión de participantes (Propi
       "meetingTime": "string (opcional)",
       "bodyContent": "string (opcional)",
       "status": "MinutesType (enum, opcional)",
+      "lastPageNumber": "number",
       "attendanceList": [
         {
           "syndic": "string",

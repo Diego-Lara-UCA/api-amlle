@@ -17,6 +17,11 @@ export class UpdateMinutesDto {
   @IsPositive()
   @IsOptional()
   actNumber?: number;
+  
+  @IsInt()
+  @IsPositive()
+  @IsOptional()
+  lastPageNumber: number;
 
   @IsDateString()
   @IsOptional()
