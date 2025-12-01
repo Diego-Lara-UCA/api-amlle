@@ -28,7 +28,7 @@ export class MinutesEntity {
   @Column({ type: 'int' })
   actNumber: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int' , nullable: true})
   lastPageNumber: number;
 
   @Column({ name: 'meeting_date', type: 'date', nullable: true })
